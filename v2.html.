@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>NEWDARK V2</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050606;font-family:Arial}
+canvas{display:block;touch-action:none}
+#menu{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle,#29312c,#020303 75%);color:white;text-align:center}
+.box{width:88%;max-width:430px;padding:32px 22px;background:#080a0bee;border:1px solid #ffffff20;border-radius:24px;box-shadow:0 0 60px #000}
+.logo{font-size:44px;font-weight:900;letter-spacing:6px}.logo b{color:#d8323d}
+.sub{color:#aaa;margin:8px 0 25px}
+button{border:0;border-radius:15px;padding:16px 30px;background:#c92f38;color:white;font-size:19px;font-weight:bold}
+#hud{position:fixed;inset:0;z-index:5;pointer-events:none;color:white;text-shadow:2px 2px 5px #000}
+#stats{position:absolute;top:12px;left:12px;background:#0009;padding:10px 12px;border-radius:12px;font-weight:bold}
+#bar{width:180px;height:10px;background:#421318;border-radius:10px;overflow:hidden;margin-top:5px}
+#hpbar{height:100%;width:100%;background:#df3642;transition:width .15s}
+#ammo{position:absolute;right:15px;top:10px;font-size:28px;font-weight:bold}
+#gun{position:absolute;right:15px;top:48px;font-size:14px}
+#score,#wave{position:absolute;right:15px;font-size:14px}
+#score{top:72px}#wave{top:94px}
+#cross{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:24px}
+#hit{position:absolute;inset:0;background:#b0000030;opacity:0;transition:.08s}
+#joy{position:fixed;z-index:10;left:18px;bottom:22px;width:140px;height:140px;border:2px solid #ffffff22;background:#ffffff08;border-radius:50%;pointer-events:auto}
+#stick{position:absolute;left:50%;top:50%;width:58px;height:58px;border-radius:50%;background:#ffffff35;transform:translate(-50%,-50%)}
+.act{position:fixed;z-index:11;border-radius:50%;padding:0;width:70px;height:70px;display:flex;align-items:center;justify-content:center;pointer-events:auto}
+#fire{right:18px;bottom:24px;width:98px;height:98px;background:#ad2933dd}
+#reload{right:128px;bottom:35px;background:#555c}
+#swap{right:128px;bottom:115px;background:#333c}
+#lookText{position:fixed;bottom:7px;left:50%;transform:translateX(-50%);font-size:10px;color:#aaa;z-index:4}
+</style>
+</head>
+<body>
+
+<div id="menu">
+<div class="box">
+<div class="logo">NEW<b>DARK</b></div>
+<div class="sub">ZOMBIE SURVIVAL • V2</div>
+<p>Sobreviva. Encontre armas. Elimine as ondas.</p>
+<button id="start">JOGAR</button>
+</div>
+</div>
+
+<div id="hit"></div>
+
+<div id="hud">
+<div id="stats">❤️ <span id="hp">100</span>
+<div id="bar"><div id="hpbar"></div></div></div>
+<div id="ammo">12 / 60</div>
+<div id="gun">PISTOLA</div>
+<div id="score">Abates: 0</div>
+<div id="wave">Onda: 1</div>
+<div id="cross">+</div>
+</div>
+
+<div id="joy"><div id="stick"></div></div>
+<button class="act" id="reload">↻</button>
+<button class="act" id="swap">🔫</button>
+<button class="act" id="fire">●</button>
+<div id="lookText">Arraste o lado direito para olhar</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script>
+let scene,camera,renderer,clock;
+let zombies=[],blood=[],buildings=[];
+let hp=100,score=0,wave=1;
+let moveX=0,moveY=0;
+let yaw=0,pitch=0;
+let looking=false,lastX=0,lastY=0;
+let reloadBusy=false,lastShot=0;
+
+const guns=[
+{name:"PISTOLA",mag:12,ammo:12,reserve:60,damage:2,delay:300,color:0x222222},
+{name:"RIFLE",mag:30,ammo:30,reserve:120,damage:3,delay:110,color:0x111111},
+{name:"ESCOPETA",mag:6,ammo:6,reserve:36,damage:7,delay:700,color:0x382b24}
+];
+
+let gi=0,gunsel=guns[0];
+
+const AC=window.AudioContext||window.webkitAudioContext;
+const audio=new AC();
+
+function sound(f,d=.08,type="square",v=.04){
+try{
+let o=audio.createOscillator(),g=audio.createGain();
+o.type=type;o.frequency.value=f;
+g.gain.setValueAtTime(v,audio.currentTime);
+g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+d);
+o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+d);
+}catch(e){}
+}
+
+function shotSound(){
+sound(gunsel===guns[2]?70:110,.09,"sawtooth",.08);
+setTimeout(()=>sound(55,.12,"square",.03),35);
+}
+
+function start(){
+if(audio.state==="suspended")audio.resume();
+
+scene=new THREE.Scene();
+scene.background=new THREE.Color(0x070a0a);
+scene.fog=new THREE.Fog(0x070a0a,15,105);
+
+camera=new THREE.PerspectiveCamera(70,innerWidth/innerHeight,.05,220);
+camera.position.set(0,1.7,8);
+camera.rotation.order="YXZ";
+
+renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:"high-performance"});
+renderer.setSize(innerWidth,innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+
+clock=new THREE.Clock();
+
+lighting();
+map();
+weapon();
+
+hp=100;score=0;wave=1;
+zombies=[];blood=[];
+
+for(let i=0;i<7;i++)spawnZombie();
+
+document.getElementById("menu").style.display="none";
+updateHUD();
+loop();
+}
+
+function lighting(){
+scene.add(new THREE.HemisphereLight(0x9aacc0,0x080808,1.4));
+
+let moon=new THREE.DirectionalLight(0xd0d8ff,2);
+moon.position.set(20,45,15);
+moon.castShadow=true;
+moon.shadow.mapSize.width=1024;
+moon.shadow.mapSize.height=1024;
+scene.add(moon);
+
+let lamp=new THREE.PointLight(0xffaa55,8,18);
+lamp.position.set(0,4,0);
+scene.add(lamp);
+}
+
+function map(){
+let ground=new THREE.Mesh(
+new THREE.PlaneGeometry(180,180),
+new THREE.MeshStandardMaterial({color:0x181d1b,roughness:.96})
+);
+ground.rotation.x=-Math.PI/2;
+ground.receiveShadow=true;
+scene.add(ground);
+
+let grid=new THREE.GridHelper(180,90,0x303632,0x202522);
+scene.add(grid);
+
+for(let i=0;i<32;i++){
+let w=4+Math.random()*8,d=4+Math.random()*8,h=2+Math.random()*6;
+let x=(Math.random()-.5)*115,z=(Math.random()-.5)*115;
+
+if(Math.hypot(x,z)<18){i--;continue}
+
+let b=new THREE.Mesh(
+new THREE.BoxGeometry(w,h,d),
+new THREE.MeshStandardMaterial({color:0x303534,roughness:.9})
+);
+b.position.set(x,h/2,z);
+b.castShadow=true;b.receiveShadow=true;
+scene.add(b);
+buildings.push(b);
+
+let roof=new THREE.Mesh(
+new THREE.BoxGeometry(w+.2,.18,d+.2),
+new THREE.MeshStandardMaterial({color:0x171918})
+);
+roof.position.set(x,h+.08,z);
+scene.add(roof);
+}
+}
+
+function weapon(){
+let old=camera.getObjectByName("WEAPON");
+if(old)camera.remove(old);
+
+let g=new THREE.Group();
+g.name="WEAPON";
+
+let body=new THREE.Mesh(
+new THREE.BoxGeometry(.24,.25,.9),
+new THREE.MeshStandardMaterial({color:gunsel.color,metalness:.75,roughness:.28})
+);
+body.position.set(.38,-.28,-.72);
+g.add(body);
+
+let barrel=new THREE.Mesh(
+new THREE.CylinderGeometry(.045,.055,.55,10),
+new THREE.MeshStandardMaterial({color:0x050505,metalness:.9,roughness:.2})
+);
+barrel.rotation.x=Math.PI/2;
+barrel.position.set(.38,-.27,-1.18);
+g.add(barrel);
+
+let grip=new THREE.Mesh(
+new THREE.BoxGeometry(.13,.35,.18),
+new THREE.MeshStandardMaterial({color:0x161616})
+);
+grip.position.set(.38,-.48,-.55);
+grip.rotation.x=-.2;
+g.add(grip);
+
+camera.add(g);
+scene.add(camera);
+
+sound(500,.07,"sine",.03);
+}
+
+function spawnZombie(){
+let z=new THREE.Group();
+
+let skin=[0x526057,0x62685a,0x454c45,0x766e5d][Math.floor(Math.random()*4)];
+
+let body=new THREE.Mesh(
+new THREE.CapsuleGeometry(.42,.85,7,10),
+new THREE.MeshStandardMaterial({color:skin,roughness:1})
+);
+body.position.y=.82;
+body.castShadow=true;
+z.add(body);
+
+let head=new THREE.Mesh(
+new THREE.SphereGeometry(.4,16,12),
+new THREE.MeshStandardMaterial({color:skin,roughness:1})
+);
+head.position.y=1.58;
+head.castShadow=true;
+z.add(head);
+
+let eyeMat=new THREE.MeshBasicMaterial({color:0xff2525});
+for(let x of [-.14,.14]){
+let eye=new THREE.Mesh(new THREE.SphereGeometry(.05,7,7),eyeMat);
+eye.position.set(x,1.62,-.35);
+z.add(eye);
+}
+
+let angle=Math.random()*Math.PI*2;
+let distance=28+Math.random()*45;
+z.position.set(camera.position.x+Math.cos(angle)*distance,0,camera.position.z+Math.sin(angle)*distance);
+
+z.userData={
+hp:3+Math.floor(wave*.7),
+speed:1.0+Math.random()*1.3+wave*.06,
+attack:0
+};
+
+scene.add(z);
+zombies.push(z);
+}
+
+function makeBlood(pos){
+for(let i=0;i<12;i++){
+let p=new THREE.Mesh(
+new THREE.SphereGeometry(.025+Math.random()*.05,5,5),
+new THREE.MeshBasicMaterial({color:0x9d1118})
+);
+p.position.copy(pos);
+p.userData={
+life:.35+Math.random()*.6,
+vx:(Math.random()-.5)*3,
+vy:.5+Math.random()*3,
+vz:(Math.random()-.5)*3
+};
+scene.add(p);
+blood.push(p);
+}
+}
+
+function fire(){
+if(!camera||reloadBusy)return;
+
+let now=performance.now();
+if(now-lastShot<gunsel.delay)return;
+lastShot=now;
+
+if(gunsel.ammo<=0){
+reload();
+return;
+}
+
+gunsel.ammo--;
+shotSound();
+
+let oldY=camera.position.y;
+camera.position.y=oldY-.035;
+setTimeout(()=>{if(camera)camera.position.y=1.7},45);
+
+let ray=new THREE.Raycaster();
+ray.setFromCamera(new THREE.Vector2(0,0),camera);
+
+let objects=[];
+zombies.forEach(z=>z.traverse(o=>{if(o.isMesh)objects.push(o)}));
+
+let hits=ray.intersectObjects(objects,false);
+
+if(hits.length){
+let obj=hits[0].object;
+let root=obj;
+while(root.parent&&!zombies.includes(root))root=root.parent;
+
+if(zombies.includes(root)){
+makeBlood(hits[0].point);
+root.userData.hp-=gunsel.damage;
+
+if(root.userData.hp<=0){
+sound(90,.28,"sawtooth",.05);
+makeBlood(root.position.clone().add(new THREE.Vector3(0,1,0)));
+scene.remove(root);
+zombies=zombies.filter(x=>x!==root);
+score++;
+if(score%8===0)wave++;
+}
+}
+}
+updateHUD();
+}
+
+function reload(){
+if(reloadBusy||gunsel.ammo>=gunsel.mag||gunsel.reserve<=0)return;
+
+reloadBusy=true;
+sound(170,.08,"square",.03);
+setTimeout(()=>sound(240,.08,"square",.03),180);
+setTimeout(()=>sound(120,.12,"square",.03),380);
+
+setTimeout(()=>{
+let need=gunsel.mag-gunsel.ammo;
+let take=Math.min(need,gunsel.reserve);
+gunsel.ammo+=take;
+gunsel.reserve-=take;
+reloadBusy=false;
+updateHUD();
+},850);
+}
+
+function swap(){
+if(reloadBusy)return;
+gi=(gi+1)%guns.length;
+gunsel=guns[gi];
+weapon();
+updateHUD();
+}
+
+function updateHUD(){
+document.getElementById("hp").textContent=Math.max(0,Math.floor(hp));
+document.getElementById("hpbar").style.width=Math.max(0,hp)+"%";
+document.getElementById("ammo").textContent=reloadBusy?"RECARREGANDO...":gunsel.ammo+" / "+gunsel.reserve;
+document.getElementById("gun").textContent=gunsel.name;
+document.getElementById("score").textContent="Abates: "+score;
+document.getElementById("wave").textContent="Onda: "+wave;
+}
+
+function update(dt){
+if(!camera)return;
+
+let speed=5.2;
+camera.position.x+=moveX*speed*dt;
+camera.position.z+=moveY*speed*dt;
+
+for(let z of zombies){
+let dx=camera.position.x-z.position.x;
+let dz=camera.position.z-z.position.z;
+let dist=Math.hypot(dx,dz);
+
+if(dist>1.5){
+z.position.x+=dx/dist*z.userData.speed*dt;
+z.position.z+=dz/dist*z.userData.speed*dt;
+}else{
+z.userData.attack-=dt;
+if(z.userData.attack<=0){
+hp-=7;
+z.userData.attack=.75;
+
+let hit=document.getElementById("hit");
+hit.style.opacity=1;
+setTimeout(()=>hit.style.opacity=0,100);
+
+if(hp<=0){
+hp=0;
+gameOver();
+}
+}
+}
+
+z.lookAt(camera.position.x,z.position.y,camera.position.z);
+}
+
+while(zombies.length<4+wave*2)spawnZombie();
+
+for(let i=blood.length-1;i>=0;i--){
+let p=blood[i];
+p.userData.life-=dt;
+p.position.x+=p.userData.vx*dt;
+p.position.y+=p.userData.vy*dt;
+p.position.z+=p.userData.vz*dt;
+p.userData.vy-=7*dt;
+
+if(p.userData.life<=0){
+scene.remove(p);
+blood.splice(i,1);
+}
+}
+
+updateHUD();
+}
+
+function gameOver(){
+document.getElementById("menu").style.display="flex";
+document.querySelector(".box").innerHTML=
+`<div class="logo">NEW<b>DARK</b></div>
+<h2>VOCÊ MORREU</h2>
+<p>Abates: ${score}</p>
+<p>Onda: ${wave}</p>
+<button onclick="location.reload()">JOGAR NOVAMENTE</button>`;
+}
+
+function loop(){
+requestAnimationFrame(loop);
+let dt=Math.min(clock.getDelta(),.05);
+update(dt);
+renderer.render(scene,camera);
+}
+
+document.getElementById("start").onclick=start;
+document.getElementById("fire").onclick=fire;
+document.getElementById("reload").onclick=reload;
+document.getElementById("swap").onclick=swap;
+
+/* JOYSTICK */
+const joy=document.getElementById("joy");
+const stick=document.getElementById("stick");
+let joyOn=false;
+
+joy.addEventListener("pointerdown",e=>{
+joyOn=true;
+joy.setPointerCapture(e.pointerId);
+joystick(e);
+});
+
+joy.addEventListener("pointermove",e=>{
+if(joyOn)joystick(e);
+});
+
+joy.addEventListener("pointerup",()=>{
+joyOn=false;
+moveX=moveY=0;
+stick.style.transform="translate(-50%,-50%)";
+});
+
+function joystick(e){
+let r=joy.getBoundingClientRect();
+let x=e.clientX-(r.left+r.width/2);
+let y=e.clientY-(r.top+r.height/2);
+let max=44,d=Math.hypot(x,y);
+
+if(d>max){x=x/d*max;y=y/d*max}
+
+moveX=x/max;
+moveY=y/max;
+
+stick.style.transform=
+`translate(calc(-50% + ${x}px),calc(-50% + ${y}px))`;
+}
+
+/* CAMERA SUAVE */
+document.addEventListener("pointerdown",e=>{
+if(!camera)return;
+if(e.clientX<175||e.clientX>innerWidth-115)return;
+looking=true;
+lastX=e.clientX;
+lastY=e.clientY;
+});
+
+document.addEventListener("pointermove",e=>{
+if(!looking||!camera)return;
+
+let dx=e.clientX-lastX;
+let dy=e.clientY-lastY;
+
+lastX=e.clientX;
+lastY=e.clientY;
+
+yaw-=dx*.0035;
+pitch-=dy*.0025;
+
+pitch=Math.max(-1.05,Math.min(1.05,pitch));
+
+camera.rotation.y=yaw;
+camera.rotation.x=pitch;
+});
+
+document.addEventListener("pointerup",()=>looking=false);
+
+addEventListener("resize",()=>{
+if(!camera||!renderer)return;
+camera.aspect=innerWidth/innerHeight;
+camera.updateProjectionMatrix();
+renderer.setSize(innerWidth,innerHeight);
+});
+</script>
+</body>
+</html>
