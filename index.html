@@ -2,214 +2,717 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>NEW DARK 1.3</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
+<title>NEW DARK 1.4</title>
 
 <style>
-*{box-sizing:border-box}
+*{
+ box-sizing:border-box;
+}
+
 html,body{
-  margin:0;
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  background:#72b8ee;
-  font-family:Arial,sans-serif;
-  user-select:none;
+ margin:0;
+ width:100%;
+ height:100%;
+ overflow:hidden;
+ background:#050505;
+ font-family:Arial,sans-serif;
 }
+
 canvas{
-  display:block;
-  width:100%;
-  height:100%;
-  touch-action:none;
+ display:block;
+ width:100%;
+ height:100%;
+ touch-action:none;
 }
 
-#menu,#gameover{
-  position:fixed;
-  inset:0;
-  z-index:100;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  color:white;
-  text-align:center;
-  background:linear-gradient(#5faee7,#14283d);
+/* =========================
+   MENU SOMBRIO
+========================= */
+
+#menu{
+ position:fixed;
+ inset:0;
+ z-index:100;
+ display:flex;
+ flex-direction:column;
+ justify-content:center;
+ align-items:center;
+ overflow:hidden;
+ color:#ff1717;
+ text-align:center;
+
+ background:
+ radial-gradient(
+   circle at 50% 48%,
+   #420909 0%,
+   #160303 32%,
+   #050505 72%,
+   #000 100%
+ );
 }
 
-#menu h1{
-  font-size:48px;
-  letter-spacing:6px;
-  margin:0;
-  text-shadow:3px 3px 8px #000;
+/* manchas */
+
+#menu:before{
+ content:"";
+ position:absolute;
+ inset:0;
+ background:
+ radial-gradient(circle at 20% 20%,#55000022,transparent 25%),
+ radial-gradient(circle at 80% 75%,#aa000022,transparent 25%);
+ pointer-events:none;
 }
 
-button{
-  border:2px solid white;
-  border-radius:12px;
-  background:#17486b;
-  color:white;
-  padding:14px 20px;
-  font-weight:bold;
-  font-size:15px;
+/* lua */
+
+#moon{
+ position:absolute;
+ top:7%;
+ right:9%;
+ width:95px;
+ height:95px;
+ border-radius:50%;
+ background:#bdbdbd;
+ box-shadow:
+ 0 0 25px #ff000033,
+ 0 0 70px #ff000011;
 }
+
+/* título */
+
+#title{
+ position:relative;
+ z-index:3;
+
+ margin:0;
+
+ font-size:54px;
+ font-weight:900;
+ letter-spacing:9px;
+
+ color:#e40000;
+
+ text-shadow:
+ 0 0 5px #ff0000,
+ 0 0 18px #900000,
+ 4px 4px 0 #080000;
+}
+
+#version{
+ position:relative;
+ z-index:3;
+
+ margin-top:5px;
+
+ color:#b00000;
+ font-weight:bold;
+ letter-spacing:4px;
+}
+
+/* =========================
+   ZUMBI DO MENU
+========================= */
+
+#zombie{
+ position:absolute;
+ z-index:2;
+
+ left:50%;
+ top:54%;
+
+ transform:
+ translate(-50%,-50%);
+
+ width:250px;
+ height:400px;
+}
+
+/* sombra */
+
+#zombie .shadow{
+ position:absolute;
+ bottom:0;
+ left:25px;
+
+ width:200px;
+ height:35px;
+
+ background:#000;
+ border-radius:50%;
+
+ box-shadow:0 0 30px #000;
+}
+
+/* corpo */
+
+#zombie .body{
+ position:absolute;
+
+ left:73px;
+ top:145px;
+
+ width:105px;
+ height:170px;
+
+ background:
+ linear-gradient(
+   90deg,
+   #172017,
+   #354536,
+   #172017
+ );
+
+ border-radius:
+ 45px 45px 22px 22px;
+
+ box-shadow:
+ 0 0 15px #000;
+}
+
+/* cabeça */
+
+#zombie .head{
+ position:absolute;
+
+ left:62px;
+ top:45px;
+
+ width:125px;
+ height:125px;
+
+ background:
+ radial-gradient(
+   circle at 38% 35%,
+   #829477,
+   #465545 65%,
+   #202820
+ );
+
+ border-radius:48% 48% 45% 45%;
+
+ box-shadow:
+ 0 0 18px #000;
+}
+
+/* orelhas */
+
+#zombie .ear{
+ position:absolute;
+
+ top:82px;
+
+ width:25px;
+ height:40px;
+
+ background:#53634d;
+
+ border-radius:50%;
+}
+
+#zombie .ear.left{
+ left:42px;
+}
+
+#zombie .ear.right{
+ right:42px;
+}
+
+/* olhos */
+
+#zombie .eye{
+ position:absolute;
+
+ top:88px;
+
+ width:17px;
+ height:17px;
+
+ background:#ff0000;
+
+ border-radius:50%;
+
+ box-shadow:
+ 0 0 8px #ff0000,
+ 0 0 20px #ff0000;
+}
+
+#zombie .eye.left{
+ left:88px;
+}
+
+#zombie .eye.right{
+ right:88px;
+}
+
+/* nariz */
+
+#zombie .nose{
+ position:absolute;
+
+ left:111px;
+ top:101px;
+
+ width:20px;
+ height:25px;
+
+ background:#3d4d39;
+
+ clip-path:
+ polygon(
+  50% 0,
+  100% 100%,
+  0 100%
+ );
+}
+
+/* boca */
+
+#zombie .mouth{
+ position:absolute;
+
+ left:83px;
+ top:130px;
+
+ width:85px;
+ height:35px;
+
+ background:#160000;
+
+ border-radius:0 0 45px 45px;
+
+ box-shadow:
+ inset 0 5px 8px #000;
+}
+
+/* dentes */
+
+#zombie .tooth{
+ position:absolute;
+
+ top:134px;
+
+ width:9px;
+ height:15px;
+
+ background:#ded8b9;
+
+ z-index:4;
+}
+
+#zombie .t1{left:94px}
+#zombie .t2{left:110px}
+#zombie .t3{left:126px}
+#zombie .t4{left:142px}
+
+/* braços */
+
+#zombie .arm{
+ position:absolute;
+
+ top:155px;
+
+ width:40px;
+ height:150px;
+
+ background:#566b50;
+
+ border-radius:25px;
+
+ box-shadow:0 0 10px #000;
+}
+
+#zombie .arm.left{
+ left:38px;
+ transform:rotate(12deg);
+}
+
+#zombie .arm.right{
+ right:38px;
+ transform:rotate(-12deg);
+}
+
+/* mãos */
+
+#zombie .hand{
+ position:absolute;
+
+ top:288px;
+
+ width:43px;
+ height:43px;
+
+ background:#63795b;
+
+ border-radius:50%;
+}
+
+#zombie .hand.left{
+ left:29px;
+}
+
+#zombie .hand.right{
+ right:29px;
+}
+
+/* pernas */
+
+#zombie .leg{
+ position:absolute;
+
+ top:292px;
+
+ width:48px;
+ height:105px;
+
+ background:#252b2c;
+
+ border-radius:15px;
+}
+
+#zombie .leg.left{
+ left:72px;
+}
+
+#zombie .leg.right{
+ right:72px;
+}
+
+/* pés */
+
+#zombie .foot{
+ position:absolute;
+
+ top:382px;
+
+ width:65px;
+ height:25px;
+
+ background:#090909;
+
+ border-radius:50%;
+}
+
+#zombie .foot.left{
+ left:55px;
+}
+
+#zombie .foot.right{
+ right:55px;
+}
+
+/* =========================
+   BOTÃO
+========================= */
+
+#start{
+ position:relative;
+ z-index:10;
+
+ margin-top:420px;
+
+ width:190px;
+ height:58px;
+
+ border:2px solid #ff1717;
+ border-radius:8px;
+
+ background:#100000;
+
+ color:#ff2020;
+
+ font-size:20px;
+ font-weight:bold;
+ letter-spacing:3px;
+
+ box-shadow:
+ 0 0 12px #ff000044,
+ inset 0 0 12px #ff000022;
+}
+
+#start:active{
+ transform:scale(.95);
+ background:#450000;
+}
+
+/* =========================
+   HUD
+========================= */
 
 #hud{
-  position:fixed;
-  top:10px;
-  left:10px;
-  z-index:30;
-  color:white;
-  font-weight:bold;
-  text-shadow:2px 2px 4px #000;
+ position:fixed;
+ top:10px;
+ left:10px;
+ z-index:30;
+
+ color:white;
+ font-weight:bold;
+ text-shadow:2px 2px 4px #000;
 }
 
 #bar{
-  width:170px;
-  height:17px;
-  border:2px solid white;
-  background:#333;
+ width:170px;
+ height:17px;
+ border:2px solid white;
+ background:#222;
 }
 
 #hp{
-  width:100%;
-  height:100%;
-  background:#21d65a;
+ width:100%;
+ height:100%;
+ background:#d00000;
 }
 
 #weapon{
-  position:fixed;
-  right:12px;
-  top:10px;
-  z-index:30;
-  color:white;
-  font-weight:bold;
-  text-shadow:2px 2px 4px #000;
+ position:fixed;
+ top:10px;
+ right:12px;
+ z-index:30;
+
+ color:#ff3333;
+ font-weight:bold;
+ text-shadow:2px 2px 4px #000;
 }
 
 #cross{
-  position:fixed;
-  left:50%;
-  top:50%;
-  transform:translate(-50%,-50%);
-  z-index:20;
-  color:white;
-  font-size:28px;
-  text-shadow:0 0 5px #000;
+ position:fixed;
+ left:50%;
+ top:50%;
+
+ transform:translate(-50%,-50%);
+
+ z-index:20;
+
+ color:#ff2222;
+ font-size:28px;
+ text-shadow:
+ 0 0 6px #000,
+ 0 0 10px #ff0000;
 }
 
 #damage{
-  position:fixed;
-  inset:0;
-  z-index:25;
-  pointer-events:none;
-  background:#d00000;
-  opacity:0;
+ position:fixed;
+ inset:0;
+
+ z-index:25;
+
+ pointer-events:none;
+
+ background:#ff0000;
+
+ opacity:0;
 }
 
 #joy{
-  position:fixed;
-  left:18px;
-  bottom:18px;
-  width:125px;
-  height:125px;
-  border:3px solid #ffffff55;
-  border-radius:50%;
-  background:#ffffff12;
-  z-index:40;
+ position:fixed;
+ left:18px;
+ bottom:18px;
+
+ width:125px;
+ height:125px;
+
+ border:3px solid #ffffff33;
+ border-radius:50%;
+
+ background:#00000044;
+
+ z-index:40;
 }
 
 #knob{
-  position:absolute;
-  left:35px;
-  top:35px;
-  width:52px;
-  height:52px;
-  border-radius:50%;
-  background:#ffffff88;
+ position:absolute;
+
+ left:35px;
+ top:35px;
+
+ width:52px;
+ height:52px;
+
+ border-radius:50%;
+
+ background:#ffffff55;
 }
 
 .action{
-  position:fixed;
-  z-index:40;
-  width:70px;
-  height:70px;
-  border-radius:50%;
-  padding:0;
+ position:fixed;
+ z-index:40;
+
+ width:70px;
+ height:70px;
+
+ border-radius:50%;
+
+ color:white;
 }
 
 #fire{
-  right:18px;
-  bottom:18px;
-  width:92px;
-  height:92px;
-  background:#941b1b;
+ right:18px;
+ bottom:18px;
+
+ width:92px;
+ height:92px;
+
+ background:#700000;
+ border-color:#ff2222;
 }
 
 #switch{
-  right:125px;
-  bottom:105px;
-  background:#23577b;
+ right:125px;
+ bottom:105px;
+
+ background:#222;
+ border-color:#ff2222;
 }
 
 #run{
-  right:125px;
-  bottom:25px;
-  background:#226b3c;
+ right:125px;
+ bottom:25px;
+
+ background:#242424;
+ border-color:#ff2222;
 }
 
+/* game over */
+
 #gameover{
-  display:none;
+ display:none;
+
+ position:fixed;
+ inset:0;
+
+ z-index:100;
+
+ justify-content:center;
+ align-items:center;
+ flex-direction:column;
+
+ color:#ff1111;
+
+ background:#050000ee;
+
+ text-align:center;
+}
+
+#gameover h1{
+ font-size:45px;
+ text-shadow:0 0 15px red;
 }
 </style>
 </head>
 
 <body>
 
+<!-- MENU -->
+
 <div id="menu">
-  <h1>NEW DARK</h1>
-  <p>VERSÃO 1.3</p>
-  <p>DAYLIGHT SURVIVAL</p>
-  <button id="start">JOGAR</button>
+
+ <div id="moon"></div>
+
+ <h1 id="title">NEW DARK</h1>
+
+ <div id="version">
+   VERSÃO 1.4
+ </div>
+
+ <!-- ZUMBI -->
+
+ <div id="zombie">
+
+   <div class="shadow"></div>
+
+   <div class="head"></div>
+
+   <div class="ear left"></div>
+   <div class="ear right"></div>
+
+   <div class="eye left"></div>
+   <div class="eye right"></div>
+
+   <div class="nose"></div>
+
+   <div class="mouth"></div>
+
+   <div class="tooth t1"></div>
+   <div class="tooth t2"></div>
+   <div class="tooth t3"></div>
+   <div class="tooth t4"></div>
+
+   <div class="body"></div>
+
+   <div class="arm left"></div>
+   <div class="arm right"></div>
+
+   <div class="hand left"></div>
+   <div class="hand right"></div>
+
+   <div class="leg left"></div>
+   <div class="leg right"></div>
+
+   <div class="foot left"></div>
+   <div class="foot right"></div>
+
+ </div>
+
+ <button id="start">
+   JOGAR
+ </button>
+
 </div>
 
+
+<!-- HUD -->
+
 <div id="hud">
-  VIDA
-  <div id="bar"><div id="hp"></div></div>
-  🧟 <span id="kills">0</span>
+ VIDA
+ <div id="bar">
+   <div id="hp"></div>
+ </div>
+
+ 🧟 <span id="kills">0</span>
 </div>
 
 <div id="weapon">PISTOLA</div>
+
 <div id="cross">+</div>
+
 <div id="damage"></div>
 
 <div id="joy">
-  <div id="knob"></div>
+ <div id="knob"></div>
 </div>
 
-<button id="fire" class="action">🔫<br>ATIRAR</button>
-<button id="switch" class="action">🔄</button>
-<button id="run" class="action">🏃<br>CORRER</button>
+<button id="fire" class="action">
+ 🔫<br>ATIRAR
+</button>
+
+<button id="switch" class="action">
+ 🔄
+</button>
+
+<button id="run" class="action">
+ 🏃<br>CORRER
+</button>
 
 <div id="gameover">
-  <h1>VOCÊ MORREU</h1>
-  <p>Zumbis eliminados: <span id="finalKills">0</span></p>
-  <button onclick="location.reload()">JOGAR NOVAMENTE</button>
+ <h1>VOCÊ MORREU</h1>
+ <p>Zumbis eliminados:
+   <span id="finalKills">0</span>
+ </p>
+ <button onclick="location.reload()">
+   JOGAR NOVAMENTE
+ </button>
 </div>
+
 
 <script>
 
 /* =========================================================
-   NEW DARK 1.3
-   CANVAS 2D
-   SEM THREE.JS
-   SEM ARQUIVOS EXTERNOS
+   JOGO 1.4
 ========================================================= */
 
-const canvas=document.querySelector("canvas") ||
-document.createElement("canvas");
+const canvas=document.createElement("canvas");
 
-if(!canvas.parentNode)
 document.body.appendChild(canvas);
 
 const ctx=canvas.getContext("2d");
@@ -218,207 +721,130 @@ let W=innerWidth;
 let H=innerHeight;
 
 function resize(){
-  W=innerWidth;
-  H=innerHeight;
-  canvas.width=W;
-  canvas.height=H;
+
+ W=innerWidth;
+ H=innerHeight;
+
+ canvas.width=W;
+ canvas.height=H;
 }
 
 resize();
+
 addEventListener("resize",resize);
 
 
-/* =========================================================
-   MUNDO
-========================================================= */
-
-const world={
-  size:1800
-};
+/* PLAYER */
 
 const player={
-  x:0,
-  z:0,
-  angle:0,
-  health:100
+ x:0,
+ z:0,
+ angle:0,
+ health:100
 };
 
 
-/* =========================================================
-   ARMAS
-========================================================= */
+/* ARMAS */
 
 const weapons=[
-  {
-    name:"PISTOLA",
-    damage:2,
-    delay:280,
-    color:"#777",
-    recoil:8,
-    sound:520
-  },
-  {
-    name:"AK-47",
-    damage:3,
-    delay:150,
-    color:"#60452e",
-    recoil:12,
-    sound:350
-  },
-  {
-    name:"UMP",
-    damage:2,
-    delay:110,
-    color:"#343b40",
-    recoil:10,
-    sound:430
-  },
-  {
-    name:"SCAR",
-    damage:4,
-    delay:190,
-    color:"#242b2f",
-    recoil:14,
-    sound:390
-  },
-  {
-    name:"SNIPER",
-    damage:8,
-    delay:650,
-    color:"#59636a",
-    recoil:22,
-    sound:230
-  }
+ {
+  name:"PISTOLA",
+  damage:2,
+  delay:280
+ },
+ {
+  name:"AK-47",
+  damage:3,
+  delay:150
+ },
+ {
+  name:"UMP",
+  damage:2,
+  delay:110
+ },
+ {
+  name:"SCAR",
+  damage:4,
+  delay:190
+ },
+ {
+  name:"SNIPER",
+  damage:8,
+  delay:650
+ }
 ];
 
 let weaponIndex=0;
 let lastShot=0;
-let recoil=0;
+let firing=false;
+let running=false;
+let kills=0;
+let dead=false;
+let started=false;
 
 
-/* =========================================================
-   ÁUDIO
-========================================================= */
-
-let audio=null;
-
-function initAudio(){
-  if(!audio)
-    audio=new AudioContext();
-
-  if(audio.state==="suspended")
-    audio.resume();
-}
-
-function beep(freq,time,type="square",volume=.07){
-
-  if(!audio)return;
-
-  const o=audio.createOscillator();
-  const g=audio.createGain();
-
-  o.type=type;
-  o.frequency.value=freq;
-
-  g.gain.setValueAtTime(volume,audio.currentTime);
-
-  g.gain.exponentialRampToValueAtTime(
-    .001,
-    audio.currentTime+time
-  );
-
-  o.connect(g);
-  g.connect(audio.destination);
-
-  o.start();
-  o.stop(audio.currentTime+time);
-}
-
-function gunSound(){
-
-  const w=weapons[weaponIndex];
-
-  beep(w.sound,.07,"sawtooth",.13);
-
-  setTimeout(()=>{
-    beep(w.sound*.45,.06,"square",.08);
-  },25);
-}
-
-function zombieSound(){
-  beep(
-    70+Math.random()*40,
-    .25,
-    "sawtooth",
-    .09
-  );
-}
-
-
-/* =========================================================
-   CASAS
-========================================================= */
-
-const houses=[
-  {x:-280,z:-180,w:150,d:120},
-  {x:280,z:-180,w:150,d:120},
-  {x:-280,z:180,w:160,d:130},
-  {x:280,z:180,w:160,d:130},
-  {x:-520,z:-420,w:180,d:140},
-  {x:520,z:-420,w:180,d:140},
-  {x:-520,z:420,w:180,d:140},
-  {x:520,z:420,w:180,d:140}
-];
-
-
-/* =========================================================
-   CARROS
-========================================================= */
-
-const cars=[
-  {x:-70,z:-75,c:"#b52d2d",a:0},
-  {x:70,z:-75,c:"#245d9c",a:0},
-  {x:-70,z:75,c:"#777",a:Math.PI},
-  {x:70,z:75,c:"#c28c2f",a:Math.PI},
-  {x:-130,z:-75,c:"#263f55",a:0}
-];
-
-
-/* =========================================================
-   ZUMBIS
-   ESTRUTURA ÚNICA E PROPORCIONAL
-========================================================= */
+/* ZUMBIS */
 
 const zombies=[];
 
 function createZombie(x,z){
 
-  zombies.push({
-    x,
-    z,
-    hp:6,
-    speed:.32+Math.random()*.12,
-    phase:Math.random()*10,
-    attack:0,
-    scale:.78+Math.random()*.08
-  });
+ zombies.push({
+
+  x:x,
+  z:z,
+
+  hp:6,
+
+  speed:
+   .12+
+   Math.random()*.07,
+
+  phase:
+   Math.random()*10,
+
+  attack:0
+
+ });
 }
 
-for(let i=0;i<28;i++){
+for(let i=0;i<25;i++){
 
-  const a=Math.random()*Math.PI*2;
-  const d=350+Math.random()*700;
+ const a=Math.random()*Math.PI*2;
+ const d=350+Math.random()*700;
 
-  createZombie(
-    Math.cos(a)*d,
-    Math.sin(a)*d
-  );
+ createZombie(
+  Math.cos(a)*d,
+  Math.sin(a)*d
+ );
 }
 
 
-/* =========================================================
-   JOYSTICK
-========================================================= */
+/* CASAS */
+
+const houses=[
+ {x:-280,z:-180,w:150,d:120},
+ {x:280,z:-180,w:150,d:120},
+ {x:-280,z:180,w:160,d:130},
+ {x:280,z:180,w:160,d:130},
+ {x:-520,z:-420,w:180,d:140},
+ {x:520,z:-420,w:180,d:140},
+ {x:-520,z:420,w:180,d:140},
+ {x:520,z:420,w:180,d:140}
+];
+
+
+/* CARROS */
+
+const cars=[
+ {x:-70,z:-75,c:"#aa2020"},
+ {x:70,z:-75,c:"#225d9c"},
+ {x:-70,z:75,c:"#777"},
+ {x:70,z:75,c:"#b78320"}
+];
+
+
+/* JOYSTICK */
 
 const joy=document.getElementById("joy");
 const knob=document.getElementById("knob");
@@ -429,1020 +855,913 @@ let joyActive=false;
 
 function moveJoy(e){
 
-  const r=joy.getBoundingClientRect();
+ const r=joy.getBoundingClientRect();
 
-  let dx=e.clientX-(r.left+r.width/2);
-  let dy=e.clientY-(r.top+r.height/2);
+ let dx=e.clientX-
+ (r.left+r.width/2);
 
-  const max=40;
-  const dist=Math.hypot(dx,dy);
+ let dy=e.clientY-
+ (r.top+r.height/2);
 
-  if(dist>max){
-    dx=dx/dist*max;
-    dy=dy/dist*max;
-  }
+ const max=40;
 
-  joyX=dx/max;
-  joyY=dy/max;
+ const dist=Math.hypot(dx,dy);
 
-  knob.style.left=(35+dx)+"px";
-  knob.style.top=(35+dy)+"px";
+ if(dist>max){
+
+  dx=dx/dist*max;
+  dy=dy/dist*max;
+ }
+
+ joyX=dx/max;
+ joyY=dy/max;
+
+ knob.style.left=(35+dx)+"px";
+ knob.style.top=(35+dy)+"px";
 }
 
 joy.onpointerdown=e=>{
-  joyActive=true;
-  joy.setPointerCapture(e.pointerId);
-  moveJoy(e);
+
+ joyActive=true;
+
+ joy.setPointerCapture(e.pointerId);
+
+ moveJoy(e);
 };
 
 joy.onpointermove=e=>{
-  if(joyActive)moveJoy(e);
+
+ if(joyActive)
+  moveJoy(e);
 };
 
 joy.onpointerup=()=>{
-  joyActive=false;
-  joyX=0;
-  joyY=0;
-  knob.style.left="35px";
-  knob.style.top="35px";
+
+ joyActive=false;
+
+ joyX=0;
+ joyY=0;
+
+ knob.style.left="35px";
+ knob.style.top="35px";
 };
 
 
-/* =========================================================
-   CÂMERA / OLHAR
-========================================================= */
+/* OLHAR */
 
 let look=false;
 let lastX=0;
 
 canvas.onpointerdown=e=>{
-  if(e.target===canvas){
-    look=true;
-    lastX=e.clientX;
-  }
+
+ look=true;
+
+ lastX=e.clientX;
 };
 
 canvas.onpointermove=e=>{
 
-  if(!look)return;
+ if(!look)return;
 
-  const dx=e.clientX-lastX;
+ const dx=e.clientX-lastX;
 
-  lastX=e.clientX;
+ lastX=e.clientX;
 
-  player.angle+=dx*.006;
+ player.angle+=dx*.006;
 };
 
 canvas.onpointerup=()=>{
-  look=false;
+ look=false;
 };
 
 
-/* =========================================================
-   CORRER
-========================================================= */
-
-let running=false;
+/* CORRER */
 
 document.getElementById("run").onclick=()=>{
-  running=!running;
 
-  document.getElementById("run").innerHTML=
-    running?"🏃<br>CORRENDO":"🏃<br>CORRER";
+ running=!running;
+
+ document.getElementById("run").innerHTML=
+ running
+ ?"🏃<br>CORRENDO"
+ :"🏃<br>CORRER";
 };
 
 
-/* =========================================================
-   MOVIMENTO
-========================================================= */
+/* MOVIMENTO */
 
 function updatePlayer(){
 
-  const speed=running?.42:.22;
+ const speed=
+ running?.42:.22;
 
-  const forward=-joyY;
-  const side=joyX;
+ const fx=Math.cos(player.angle);
+ const fz=Math.sin(player.angle);
 
-  const fx=Math.cos(player.angle);
-  const fz=Math.sin(player.angle);
+ const rx=-Math.sin(player.angle);
+ const rz=Math.cos(player.angle);
 
-  const rx=-Math.sin(player.angle);
-  const rz=Math.cos(player.angle);
+ const forward=-joyY;
+ const side=joyX;
 
-  player.x+=(fx*forward+rx*side)*speed;
-  player.z+=(fz*forward+rz*side)*speed;
+ player.x+=
+ (fx*forward+rx*side)*speed;
 
-  player.x=Math.max(
-    -world.size,
-    Math.min(world.size,player.x)
-  );
-
-  player.z=Math.max(
-    -world.size,
-    Math.min(world.size,player.z)
-  );
+ player.z+=
+ (fz*forward+rz*side)*speed;
 }
 
 
-/* =========================================================
-   TROCA DE ARMA
-========================================================= */
+/* TIRO */
 
-document.getElementById("switch").onclick=()=>{
-
-  weaponIndex++;
-
-  if(weaponIndex>=weapons.length)
-    weaponIndex=0;
-
-  document.getElementById("weapon")
-    .textContent=weapons[weaponIndex].name;
+document.getElementById("fire")
+.onpointerdown=()=>{
+ firing=true;
 };
 
-
-/* =========================================================
-   TIRO
-========================================================= */
-
-let firing=false;
-
-document.getElementById("fire").onpointerdown=()=>{
-  firing=true;
-  initAudio();
-};
-
-document.getElementById("fire").onpointerup=()=>{
-  firing=false;
+document.getElementById("fire")
+.onpointerup=()=>{
+ firing=false;
 };
 
 function shoot(){
 
-  const now=performance.now();
-  const w=weapons[weaponIndex];
+ const now=performance.now();
 
-  if(now-lastShot<w.delay)return;
+ const w=weapons[weaponIndex];
 
-  lastShot=now;
+ if(now-lastShot<w.delay)
+  return;
 
-  gunSound();
+ lastShot=now;
 
-  recoil=w.recoil;
+ let best=null;
+ let bestDist=Infinity;
 
-  /* linha de mira */
+ for(const z of zombies){
 
-  let best=null;
-  let bestDist=Infinity;
+  const dx=z.x-player.x;
+  const dz=z.z-player.z;
 
-  for(const z of zombies){
+  const dist=Math.hypot(dx,dz);
 
-    const dx=z.x-player.x;
-    const dz=z.z-player.z;
+  if(dist>800)
+   continue;
 
-    const dist=Math.hypot(dx,dz);
+  let a=Math.atan2(dz,dx);
+  let diff=a-player.angle;
 
-    if(dist>800)continue;
+  while(diff>Math.PI)
+   diff-=Math.PI*2;
 
-    const targetAngle=Math.atan2(dz,dx);
+  while(diff<-Math.PI)
+   diff+=Math.PI*2;
 
-    let diff=targetAngle-player.angle;
+  if(Math.abs(diff)<.1){
 
-    while(diff>Math.PI)diff-=Math.PI*2;
-    while(diff<-Math.PI)diff+=Math.PI*2;
+   if(dist<bestDist){
 
-    if(Math.abs(diff)<.09){
-
-      if(dist<bestDist){
-        best=z;
-        bestDist=dist;
-      }
-    }
+    best=z;
+    bestDist=dist;
+   }
   }
+ }
 
-  if(best){
+ if(best){
 
-    best.hp-=w.damage;
+  best.hp-=w.damage;
 
-    if(best.hp<=0){
+  if(best.hp<=0){
 
-      const i=zombies.indexOf(best);
+   const i=zombies.indexOf(best);
 
-      if(i>=0)
-        zombies.splice(i,1);
+   if(i>=0)
+    zombies.splice(i,1);
 
-      kills++;
+   kills++;
 
-      document.getElementById("kills")
-        .textContent=kills;
-    }
+   document.getElementById("kills")
+    .textContent=kills;
   }
+ }
 }
 
 
-/* =========================================================
-   ZUMBIS
-   NUNCA DEITAM
-========================================================= */
+/* ZUMBIS */
 
 function updateZombies(){
 
-  for(const z of zombies){
+ for(const z of zombies){
 
-    const dx=player.x-z.x;
-    const dz=player.z-z.z;
+  const dx=player.x-z.x;
+  const dz=player.z-z.z;
 
-    const dist=Math.hypot(dx,dz);
+  const dist=Math.hypot(dx,dz);
 
-    if(dist>55){
+  if(dist>45){
 
-      z.x+=(dx/dist)*z.speed;
-      z.z+=(dz/dist)*z.speed;
+   z.x+=(dx/dist)*z.speed;
+   z.z+=(dz/dist)*z.speed;
 
-      z.phase+=.15;
+   z.phase+=.15;
 
-    }else{
+  }else{
 
-      z.attack++;
+   z.attack++;
 
-      if(z.attack%70===0){
+   if(z.attack%70===0){
 
-        player.health-=6;
+    player.health-=6;
 
-        damageEffect();
-        zombieSound();
+    const hp=
+     Math.max(0,player.health);
 
-        if(player.health<=0)
-          gameOver();
-      }
-    }
+    document.getElementById("hp")
+     .style.width=hp+"%";
+
+    const d=
+     document.getElementById("damage");
+
+    d.style.opacity=.55;
+
+    setTimeout(()=>{
+     d.style.opacity=0;
+    },130);
+
+    if(player.health<=0)
+     gameOver();
+   }
   }
+ }
 }
 
 
-/* =========================================================
-   EFEITO DE DANO
-========================================================= */
-
-function damageEffect(){
-
-  const d=document.getElementById("damage");
-
-  d.style.opacity=.55;
-
-  setTimeout(()=>{
-    d.style.opacity=0;
-  },130);
-
-  document.getElementById("hp")
-    .style.width=Math.max(0,player.health)+"%";
-}
-
-
-/* =========================================================
-   DESENHO DO MUNDO
-========================================================= */
+/* PROJEÇÃO */
 
 function project(x,z){
 
-  const dx=x-player.x;
-  const dz=z-player.z;
+ const dx=x-player.x;
+ const dz=z-player.z;
 
-  const ca=Math.cos(-player.angle);
-  const sa=Math.sin(-player.angle);
+ const ca=Math.cos(-player.angle);
+ const sa=Math.sin(-player.angle);
 
-  const px=dx*ca-dz*sa;
-  const pz=dx*sa+dz*ca;
+ const px=dx*ca-dz*sa;
+ const pz=dx*sa+dz*ca;
 
-  if(pz<=5)return null;
+ if(pz<=5)
+  return null;
 
-  const f=600/pz;
+ const f=600/pz;
 
-  return {
-    x:W/2+px*f,
-    y:H*.53,
-    depth:pz,
-    scale:f
-  };
+ return {
+  x:W/2+px*f,
+  y:H*.52,
+  depth:pz,
+  scale:f
+ };
 }
 
 
-/* =========================================================
-   SOL E CÉU
-========================================================= */
+/* CÉU */
 
 function drawSky(){
 
-  const g=ctx.createLinearGradient(0,0,0,H);
+ const g=
+  ctx.createLinearGradient(
+   0,0,0,H
+  );
 
-  g.addColorStop(0,"#48a5e8");
-  g.addColorStop(.55,"#9bd4f5");
-  g.addColorStop(1,"#5f8d4d");
+ g.addColorStop(0,"#080b12");
+ g.addColorStop(.5,"#171a20");
+ g.addColorStop(1,"#11150f");
 
-  ctx.fillStyle=g;
-  ctx.fillRect(0,0,W,H);
+ ctx.fillStyle=g;
 
-  /* sol */
-
-  ctx.fillStyle="#fff3a3";
-
-  ctx.beginPath();
-  ctx.arc(W*.82,H*.18,48,0,Math.PI*2);
-  ctx.fill();
+ ctx.fillRect(
+  0,0,W,H
+ );
 }
 
 
-/* =========================================================
-   CHÃO E RUAS
-========================================================= */
+/* TERRENO */
 
 function drawGround(){
 
-  ctx.fillStyle="#537b48";
-  ctx.fillRect(0,H*.5,W,H*.5);
+ ctx.fillStyle="#283526";
 
-  ctx.fillStyle="#44494a";
+ ctx.fillRect(
+  0,H*.5,W,H*.5
+ );
 
-  const roadY=H*.63;
+ ctx.fillStyle="#35393a";
 
-  ctx.fillRect(0,roadY,W,100);
+ ctx.fillRect(
+  0,H*.63,W,100
+ );
 
-  ctx.fillStyle="#c9c39a";
+ ctx.fillStyle="#aaa47e";
 
-  for(let x=-50;x<W+100;x+=100){
+ for(
+  let x=-50;
+  x<W+100;
+  x+=100
+ ){
 
-    ctx.fillRect(
-      x,
-      roadY+48,
-      55,
-      5
-    );
-  }
+  ctx.fillRect(
+   x,
+   H*.68,
+   55,
+   5
+  );
+ }
 }
 
 
-/* =========================================================
-   CASA
-========================================================= */
+/* CASA */
 
 function drawHouse(h){
 
-  const p=project(h.x,h.z);
+ const p=project(h.x,h.z);
 
-  if(!p)return;
+ if(!p)return;
 
-  const s=Math.min(p.scale,220);
+ const w=h.w/p.depth*600;
+ const hh=h.d/p.depth*600;
 
-  const w=h.w/p.depth*600;
-  const hh=h.d/p.depth*600;
+ ctx.fillStyle="#6b3f2f";
 
-  if(p.x<-400||p.x>W+400)return;
+ ctx.fillRect(
+  p.x-w/2,
+  p.y-hh*.65,
+  w,
+  hh*.65
+ );
 
-  /* sombra */
+ /* tijolos */
 
-  ctx.fillStyle="rgba(0,0,0,.25)";
-  ctx.fillRect(
-    p.x-w/2+8,
-    p.y-hh*.65+8,
-    w,
-    hh*.65
-  );
+ ctx.strokeStyle="#3c251e";
+ ctx.lineWidth=1;
 
-  /* parede */
-
-  ctx.fillStyle="#a76e4c";
-
-  ctx.fillRect(
-    p.x-w/2,
-    p.y-hh*.65,
-    w,
-    hh*.65
-  );
-
-  /* tijolos */
-
-  ctx.strokeStyle="#754a36";
-  ctx.lineWidth=1;
-
-  for(let yy=0;yy<5;yy++){
-
-    const y=
-      p.y-hh*.65+
-      yy*(hh*.65/5);
-
-    ctx.beginPath();
-    ctx.moveTo(p.x-w/2,y);
-    ctx.lineTo(p.x+w/2,y);
-    ctx.stroke();
-  }
-
-  /* telhado */
-
-  ctx.fillStyle="#40332e";
+ for(
+  let y=p.y-hh*.65;
+  y<p.y;
+  y+=hh*.12
+ ){
 
   ctx.beginPath();
-  ctx.moveTo(
-    p.x-w*.6,
-    p.y-hh*.65
-  );
 
-  ctx.lineTo(
-    p.x,
-    p.y-hh*.95
-  );
+  ctx.moveTo(p.x-w/2,y);
+  ctx.lineTo(p.x+w/2,y);
 
-  ctx.lineTo(
-    p.x+w*.6,
-    p.y-hh*.65
-  );
+  ctx.stroke();
+ }
 
-  ctx.closePath();
-  ctx.fill();
+ /* telhado */
 
-  /* porta */
+ ctx.fillStyle="#1b1817";
 
-  ctx.fillStyle="#45291b";
+ ctx.beginPath();
 
-  ctx.fillRect(
-    p.x-14,
-    p.y-hh*.4,
-    28,
-    hh*.4
-  );
+ ctx.moveTo(
+  p.x-w*.6,
+  p.y-hh*.65
+ );
 
-  /* janela */
+ ctx.lineTo(
+  p.x,
+  p.y-hh
+ );
 
-  ctx.fillStyle="#75c9ef";
+ ctx.lineTo(
+  p.x+w*.6,
+  p.y-hh*.65
+ );
 
-  ctx.fillRect(
-    p.x-w*.3,
-    p.y-hh*.48,
-    30,
-    25
-  );
+ ctx.closePath();
 
-  ctx.fillRect(
-    p.x+w*.18,
-    p.y-hh*.48,
-    30,
-    25
-  );
+ ctx.fill();
+
+ /* porta */
+
+ ctx.fillStyle="#190d09";
+
+ ctx.fillRect(
+  p.x-14,
+  p.y-hh*.4,
+  28,
+  hh*.4
+ );
+
+ /* janela */
+
+ ctx.fillStyle="#4e8ba5";
+
+ ctx.fillRect(
+  p.x-w*.3,
+  p.y-hh*.48,
+  30,
+  25
+ );
 }
 
 
-/* =========================================================
-   CARRO
-========================================================= */
+/* CARRO */
 
 function drawCar(c){
 
-  const p=project(c.x,c.z);
+ const p=project(c.x,c.z);
 
-  if(!p)return;
+ if(!p)return;
 
-  const s=Math.max(20,Math.min(100,650/p.depth));
+ const s=Math.max(
+  20,
+  Math.min(100,650/p.depth)
+ );
 
-  ctx.save();
+ ctx.save();
 
-  ctx.translate(p.x,p.y);
+ ctx.translate(p.x,p.y);
 
-  ctx.fillStyle="rgba(0,0,0,.3)";
-  ctx.fillRect(-s*.8,5,s*1.6,12);
+ ctx.fillStyle="#000";
 
-  ctx.fillStyle=c.c;
+ ctx.fillRect(
+  -s*.9,
+  5,
+  s*1.8,
+  12
+ );
 
-  ctx.fillRect(
-    -s,
-    -s*.35,
-    s*2,
-    s*.7
+ ctx.fillStyle=c.c;
+
+ ctx.fillRect(
+  -s,
+  -s*.35,
+  s*2,
+  s*.7
+ );
+
+ ctx.fillStyle="#111";
+
+ ctx.fillRect(
+  -s*.6,
+  -s*.65,
+  s*1.2,
+  s*.32
+ );
+
+ ctx.fillStyle="#538ca4";
+
+ ctx.fillRect(
+  -s*.48,
+  -s*.58,
+  s*.96,
+  s*.22
+ );
+
+ ctx.fillStyle="#050505";
+
+ for(
+  const x of [-.75,.75]
+ ){
+
+  ctx.beginPath();
+
+  ctx.arc(
+   x*s,
+   s*.35,
+   s*.2,
+   0,
+   Math.PI*2
   );
 
-  ctx.fillStyle="#111";
+  ctx.fill();
+ }
 
-  ctx.fillRect(
-    -s*.65,
-    -s*.65,
-    s*1.3,
-    s*.35
-  );
-
-  ctx.fillStyle="#75bfe0";
-
-  ctx.fillRect(
-    -s*.5,
-    -s*.58,
-    s,
-    s*.25
-  );
-
-  /* rodas */
-
-  ctx.fillStyle="#111";
-
-  for(const x of [-.78,.78]){
-
-    ctx.beginPath();
-
-    ctx.arc(
-      x*s,
-      s*.35,
-      s*.22,
-      0,
-      Math.PI*2
-    );
-
-    ctx.fill();
-  }
-
-  ctx.restore();
+ ctx.restore();
 }
 
 
-/* =========================================================
-   ZUMBI HUMANO
-   CABEÇA + CORPO + BRAÇOS + PERNAS + ROSTO
-========================================================= */
+/* ZUMBI NO JOGO */
 
 function drawZombie(z){
 
-  const p=project(z.x,z.z);
+ const p=project(z.x,z.z);
 
-  if(!p)return;
+ if(!p)return;
 
-  const s=Math.max(
-    12,
-    Math.min(105,700/p.depth)
-  )*z.scale;
+ const s=Math.max(
+  12,
+  Math.min(100,700/p.depth)
+ );
 
-  const walk=Math.sin(z.phase)*s*.12;
+ const walk=
+  Math.sin(z.phase)*s*.1;
 
-  ctx.save();
+ ctx.save();
 
-  ctx.translate(p.x,p.y);
+ ctx.translate(p.x,p.y);
 
-  /* sombra */
+ /* sombra */
 
-  ctx.fillStyle="rgba(0,0,0,.35)";
+ ctx.fillStyle="#0008";
 
-  ctx.beginPath();
-  ctx.ellipse(
-    0,
-    4,
-    s*.48,
-    s*.16,
-    0,
-    0,
-    Math.PI*2
-  );
-  ctx.fill();
+ ctx.beginPath();
 
-  /* pernas */
+ ctx.ellipse(
+  0,
+  5,
+  s*.5,
+  s*.15,
+  0,
+  0,
+  Math.PI*2
+ );
 
-  ctx.strokeStyle="#252b2f";
-  ctx.lineWidth=s*.16;
-  ctx.lineCap="round";
+ ctx.fill();
 
-  ctx.beginPath();
-  ctx.moveTo(-s*.18,0);
-  ctx.lineTo(-s*.22+walk,s*.72);
-  ctx.stroke();
+ /* pernas */
 
-  ctx.beginPath();
-  ctx.moveTo(s*.18,0);
-  ctx.lineTo(s*.22-walk,s*.72);
-  ctx.stroke();
+ ctx.strokeStyle="#252525";
 
-  /* sapatos */
+ ctx.lineWidth=s*.16;
 
-  ctx.lineWidth=s*.18;
+ ctx.lineCap="round";
 
-  ctx.beginPath();
-  ctx.moveTo(-s*.22+walk,s*.72);
-  ctx.lineTo(-s*.38+walk,s*.75);
-  ctx.stroke();
+ ctx.beginPath();
 
-  ctx.beginPath();
-  ctx.moveTo(s*.22-walk,s*.72);
-  ctx.lineTo(s*.38-walk,s*.75);
-  ctx.stroke();
+ ctx.moveTo(-s*.16,0);
 
-  /* braços */
+ ctx.lineTo(
+  -s*.2+walk,
+  s*.72
+ );
 
-  ctx.strokeStyle="#81956f";
-  ctx.lineWidth=s*.14;
+ ctx.stroke();
 
-  const attack=z.attack>0;
+ ctx.beginPath();
 
-  ctx.beginPath();
+ ctx.moveTo(s*.16,0);
 
-  ctx.moveTo(-s*.42,-s*.42);
+ ctx.lineTo(
+  s*.2-walk,
+  s*.72
+ );
 
-  ctx.lineTo(
-    attack?-s*.68:-s*.48,
-    attack?-s*.72:-s*.05
-  );
+ ctx.stroke();
 
-  ctx.stroke();
+ /* corpo */
 
-  ctx.beginPath();
+ ctx.fillStyle="#40513f";
 
-  ctx.moveTo(s*.42,-s*.42);
+ ctx.beginPath();
 
-  ctx.lineTo(
-    attack?s*.68:s*.48,
-    attack?-s*.72:-s*.05
-  );
+ ctx.roundRect(
+  -s*.38,
+  -s*.8,
+  s*.76,
+  s*.85,
+  s*.12
+ );
 
-  ctx.stroke();
+ ctx.fill();
 
-  /* mãos */
+ /* braços */
 
-  ctx.fillStyle="#849b74";
+ ctx.strokeStyle="#819373";
 
-  ctx.beginPath();
-  ctx.arc(
-    attack?-s*.68:-s*.48,
-    attack?-s*.72:-s*.05,
-    s*.1,
-    0,
-    Math.PI*2
-  );
-  ctx.fill();
+ ctx.lineWidth=s*.13;
 
-  ctx.beginPath();
-  ctx.arc(
-    attack?s*.68:s*.48,
-    attack?-s*.72:-s*.05,
-    s*.1,
-    0,
-    Math.PI*2
-  );
-  ctx.fill();
+ ctx.beginPath();
 
-  /* torso */
+ ctx.moveTo(-s*.37,-s*.55);
 
-  ctx.fillStyle="#485b4b";
+ ctx.lineTo(
+  -s*.55,
+  z.attack>0?-s*.7:-s*.1
+ );
 
-  ctx.beginPath();
-  ctx.roundRect(
-    -s*.4,
-    -s*.78,
-    s*.8,
-    s*.9,
-    s*.12
-  );
-  ctx.fill();
+ ctx.stroke();
 
-  /* pescoço */
+ ctx.beginPath();
 
-  ctx.fillStyle="#829574";
+ ctx.moveTo(s*.37,-s*.55);
+
+ ctx.lineTo(
+  s*.55,
+  z.attack>0?-s*.7:-s*.1
+ );
+
+ ctx.stroke();
+
+ /* cabeça */
+
+ ctx.fillStyle="#819372";
+
+ ctx.beginPath();
+
+ ctx.arc(
+  0,
+  -s*1.2,
+  s*.34,
+  0,
+  Math.PI*2
+ );
+
+ ctx.fill();
+
+ /* orelhas */
+
+ ctx.beginPath();
+
+ ctx.arc(
+  -s*.34,
+  -s*1.2,
+  s*.08,
+  0,
+  Math.PI*2
+ );
+
+ ctx.fill();
+
+ ctx.beginPath();
+
+ ctx.arc(
+  s*.34,
+  -s*1.2,
+  s*.08,
+  0,
+  Math.PI*2
+ );
+
+ ctx.fill();
+
+ /* olhos */
+
+ ctx.fillStyle="#f00";
+
+ ctx.beginPath();
+
+ ctx.arc(
+  -s*.12,
+  -s*1.23,
+  s*.05,
+  0,
+  Math.PI*2
+ );
+
+ ctx.fill();
+
+ ctx.beginPath();
+
+ ctx.arc(
+  s*.12,
+  -s*1.23,
+  s*.05,
+  0,
+  Math.PI*2
+ );
+
+ ctx.fill();
+
+ /* nariz */
+
+ ctx.fillStyle="#586955";
+
+ ctx.beginPath();
+
+ ctx.moveTo(0,-s*1.2);
+
+ ctx.lineTo(
+  s*.07,
+  -s*1.08
+ );
+
+ ctx.lineTo(
+  -s*.07,
+  -s*1.08
+ );
+
+ ctx.closePath();
+
+ ctx.fill();
+
+ /* boca */
+
+ ctx.fillStyle="#180000";
+
+ ctx.fillRect(
+  -s*.16,
+  -s*1.0,
+  s*.32,
+  s*.09
+ );
+
+ /* dentes */
+
+ ctx.fillStyle="#e3dbb9";
+
+ for(
+  let i=-1;
+  i<=1;
+  i++
+ ){
 
   ctx.fillRect(
-    -s*.13,
-    -s*.98,
-    s*.26,
-    s*.2
+   i*s*.07-s*.025,
+   -s*.995,
+   s*.05,
+   s*.05
   );
+ }
 
-  /* cabeça */
-
-  ctx.fillStyle="#899c7b";
-
-  ctx.beginPath();
-  ctx.arc(
-    0,
-    -s*1.2,
-    s*.34,
-    0,
-    Math.PI*2
-  );
-  ctx.fill();
-
-  /* orelhas */
-
-  ctx.beginPath();
-  ctx.arc(
-    -s*.34,
-    -s*1.2,
-    s*.09,
-    0,
-    Math.PI*2
-  );
-  ctx.fill();
-
-  ctx.beginPath();
-  ctx.arc(
-    s*.34,
-    -s*1.2,
-    s*.09,
-    0,
-    Math.PI*2
-  );
-  ctx.fill();
-
-  /* olhos */
-
-  ctx.fillStyle="#e00000";
-
-  ctx.beginPath();
-  ctx.arc(
-    -s*.12,
-    -s*1.23,
-    s*.055,
-    0,
-    Math.PI*2
-  );
-  ctx.fill();
-
-  ctx.beginPath();
-  ctx.arc(
-    s*.12,
-    -s*1.23,
-    s*.055,
-    0,
-    Math.PI*2
-  );
-  ctx.fill();
-
-  /* nariz */
-
-  ctx.fillStyle="#687b65";
-
-  ctx.beginPath();
-
-  ctx.moveTo(0,-s*1.2);
-  ctx.lineTo(s*.07,-s*1.08);
-  ctx.lineTo(-s*.07,-s*1.08);
-  ctx.closePath();
-
-  ctx.fill();
-
-  /* boca */
-
-  ctx.fillStyle="#220606";
-
-  ctx.fillRect(
-    -s*.17,
-    -s*.99,
-    s*.34,
-    s*.09
-  );
-
-  /* dentes */
-
-  ctx.fillStyle="#eee3c5";
-
-  for(let i=-1;i<=1;i++){
-
-    ctx.fillRect(
-      i*s*.07-s*.025,
-      -s*.985,
-      s*.05,
-      s*.06
-    );
-  }
-
-  ctx.restore();
+ ctx.restore();
 }
 
 
-/* =========================================================
-   ARMA EM PRIMEIRA PESSOA
-========================================================= */
+/* ARMA */
 
 function drawWeapon(){
 
-  const w=weapons[weaponIndex];
+ const x=W*.68;
+ const y=H*.82;
 
-  const scale=Math.min(W,H)/700;
+ const s=Math.min(W,H)/700;
 
-  const x=W*.68;
-  const base=H*.82+recoil;
+ ctx.save();
 
-  ctx.save();
+ /* braço */
 
-  /* braço */
+ ctx.fillStyle="#a9795e";
 
-  ctx.fillStyle="#b78360";
+ ctx.fillRect(
+  x,
+  y+20*s,
+  70*s,
+  130*s
+ );
 
-  ctx.beginPath();
+ /* corpo */
 
-  ctx.roundRect(
-    x-scl(35),
-    base+scl(15),
-    scl(80),
-    scl(125),
-    scl(25)
-  );
+ ctx.fillStyle=
+  weaponIndex===1
+  ?" #59432e"
+  :"#282d30";
 
-  ctx.fill();
+ ctx.fillRect(
+  x,
+  y,
+  125*s,
+  45*s
+ );
 
-  /* corpo da arma */
+ /* cano */
 
-  ctx.fillStyle=w.color;
+ ctx.fillStyle="#0b0c0d";
 
-  ctx.beginPath();
+ ctx.fillRect(
+  x+90*s,
+  y+12*s,
+  180*s,
+  18*s
+ );
 
-  ctx.roundRect(
-    x,
-    base,
-    scl(120),
-    scl(45),
-    scl(8)
-  );
+ /* carregador */
 
-  ctx.fill();
+ ctx.fillRect(
+  x+55*s,
+  y+38*s,
+  25*s,
+  65*s
+ );
 
-  /* cano */
+ /* cabo */
 
-  ctx.fillStyle="#171a1c";
+ ctx.save();
 
-  ctx.fillRect(
-    x+scl(80),
-    base+scl(12),
-    scl(170),
-    scl(18)
-  );
+ ctx.translate(
+  x+20*s,
+  y+40*s
+ );
 
-  /* ponta */
+ ctx.rotate(.3);
 
-  ctx.fillRect(
-    x+scl(245),
-    base+scl(7),
-    scl(25),
-    scl(28)
-  );
+ ctx.fillRect(
+  0,
+  0,
+  32*s,
+  80*s
+ );
 
-  /* cabo */
+ ctx.restore();
 
-  ctx.fillStyle="#242628";
-
-  ctx.save();
-
-  ctx.translate(
-    x+scl(22),
-    base+scl(40)
-  );
-
-  ctx.rotate(.28);
-
-  ctx.fillRect(
-    0,
-    0,
-    scl(32),
-    scl(85)
-  );
-
-  ctx.restore();
-
-  /* carregador */
-
-  ctx.fillStyle="#17191a";
-
-  ctx.save();
-
-  ctx.translate(
-    x+scl(60),
-    base+scl(42)
-  );
-
-  ctx.rotate(.12);
-
-  ctx.fillRect(
-    0,
-    0,
-    scl(25),
-    scl(65)
-  );
-
-  ctx.restore();
-
-  /* detalhes */
-
-  ctx.fillStyle="#9ca4a7";
-
-  ctx.fillRect(
-    x+scl(10),
-    base+scl(8),
-    scl(45),
-    scl(5)
-  );
-
-  ctx.restore();
-}
-
-function scl(v){
-  return v*Math.min(W,H)/700;
+ ctx.restore();
 }
 
 
-/* =========================================================
-   LOOP
-========================================================= */
-
-let kills=0;
-let dead=false;
-let started=false;
-
-function gameOver(){
-
-  if(dead)return;
-
-  dead=true;
-
-  document.getElementById("finalKills")
-    .textContent=kills;
-
-  document.getElementById("gameover")
-    .style.display="flex";
-}
-
-document.getElementById("start").onclick=()=>{
-
-  started=true;
-
-  document.getElementById("menu")
-    .style.display="none";
-
-  initAudio();
-};
-
+/* LOOP */
 
 function render(){
 
-  drawSky();
-  drawGround();
+ drawSky();
+ drawGround();
 
-  /* objetos ordenados por distância */
+ const objects=[];
 
-  const objects=[];
+ for(const h of houses)
+  objects.push({
+   type:"house",
+   obj:h,
+   d:Math.hypot(
+    h.x-player.x,
+    h.z-player.z
+   )
+  });
 
-  for(const h of houses)
-    objects.push({
-      type:"house",
-      obj:h,
-      dist:Math.hypot(
-        h.x-player.x,
-        h.z-player.z
-      )
-    });
+ for(const c of cars)
+  objects.push({
+   type:"car",
+   obj:c,
+   d:Math.hypot(
+    c.x-player.x,
+    c.z-player.z
+   )
+  });
 
-  for(const c of cars)
-    objects.push({
-      type:"car",
-      obj:c,
-      dist:Math.hypot(
-        c.x-player.x,
-        c.z-player.z
-      )
-    });
+ for(const z of zombies)
+  objects.push({
+   type:"zombie",
+   obj:z,
+   d:Math.hypot(
+    z.x-player.x,
+    z.z-player.z
+   )
+  });
 
-  for(const z of zombies)
-    objects.push({
-      type:"zombie",
-      obj:z,
-      dist:Math.hypot(
-        z.x-player.x,
-        z.z-player.z
-      )
-    });
+ objects.sort(
+  (a,b)=>b.d-a.d
+ );
 
-  objects.sort((a,b)=>b.dist-a.dist);
+ for(const o of objects){
 
-  for(const o of objects){
+  if(o.type==="house")
+   drawHouse(o.obj);
 
-    if(o.type==="house")
-      drawHouse(o.obj);
+  if(o.type==="car")
+   drawCar(o.obj);
 
-    if(o.type==="car")
-      drawCar(o.obj);
+  if(o.type==="zombie")
+   drawZombie(o.obj);
+ }
 
-    if(o.type==="zombie")
-      drawZombie(o.obj);
-  }
-
-  recoil*=.75;
-
-  drawWeapon();
+ drawWeapon();
 }
 
 
-function loop(){
+document.getElementById("start").onclick=()=>{
 
-  requestAnimationFrame(loop);
+ started=true;
 
-  if(!started||dead)return;
+ document.getElementById("menu")
+  .style.display="none";
+};
 
-  updatePlayer();
-  updateZombies();
 
-  if(firing)
-    shoot();
+function animate(){
 
-  render();
+ requestAnimationFrame(animate);
+
+ if(!started||dead)
+  return;
+
+ updatePlayer();
+ updateZombies();
+
+ if(firing)
+  shoot();
+
+ render();
 }
 
-loop();
+animate();
+
+
+/* GAME OVER */
+
+function gameOver(){
+
+ if(dead)return;
+
+ dead=true;
+
+ document.getElementById("finalKills")
+  .textContent=kills;
+
+ document.getElementById("gameover")
+  .style.display="flex";
+}
 
 </script>
+
 </body>
 </html>
