@@ -3,20 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>NEW DARK 3D MOBILE</title>
+<title>NEW DARK 3D - IMPROVED ZOMBIES</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
-html, body { width: 100%; height: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: #000; font-family: Arial, sans-serif; }
 canvas { display: block; width: 100vw; height: 100vh; }
 
 #hud { position: fixed; top: 12px; left: 12px; z-index: 10; color: #fff; font-weight: bold; text-shadow: 1px 1px 3px #000; }
 #bar { width: 140px; height: 12px; border: 1px solid #fff; background: #333; margin-top: 4px; border-radius: 3px; }
-#hp { height: 100%; width: 100%; background: #2e7d32; }
+#hp { height: 100%; width: 100%; background: #2e7d32; transition: width 0.2s; }
 
 #ammoUI { position: fixed; top: 12px; right: 12px; z-index: 10; color: #fff; text-align: right; font-weight: bold; text-shadow: 1px 1px 3px #000; }
 #weaponName { color: #fbc02d; font-size: 16px; }
 
-#cross { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); color: rgba(255,255,255,0.6); font-size: 22px; pointer-events: none; z-index: 10; }
+#cross { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); color: rgba(255,255,255,0.7); font-size: 22px; pointer-events: none; z-index: 10; }
 
 .btn { position: fixed; z-index: 20; border-radius: 50%; border: 2px solid rgba(255,255,255,0.4); color: #fff; font-weight: bold; display: flex; justify-content: center; align-items: center; background: rgba(0,0,0,0.5); }
 .btn:active { transform: scale(0.9); background: rgba(255,255,255,0.2); }
@@ -35,7 +35,7 @@ canvas { display: block; width: 100vw; height: 100vh; }
 
 <div id="startScreen">
     <h1>NEW DARK</h1>
-    <p style="color:#aaa; margin-bottom:20px;">SURVIVAL MOBILE 3D</p>
+    <p style="color:#aaa; margin-bottom:20px;">SURVIVAL 3D MOBILE</p>
     <button id="startBtn">JOGAR AGORA</button>
 </div>
 
@@ -70,22 +70,23 @@ resize();
 window.addEventListener("resize", resize);
 
 /* ==========================================================================
-   ESTADO DO JOGO E JOGADOR
+   ESTADO DO JOGO
    ========================================================================== */
 const player = {
-    x: 100, y: 100, dirX: -1, dirY: 0, planeX: 0, planeY: 0.66,
+    x: 130, y: 130, dirX: -1, dirY: 0, planeX: 0, planeY: 0.66,
     hp: 100, kills: 0
 };
 
 const weapons = [
-    { name: "PISTOLA", damage: 40, ammo: 12, maxAmmo: 12, delay: 300 },
-    { name: "FUZIL AK", damage: 25, ammo: 30, maxAmmo: 30, delay: 120 }
+    { name: "PISTOLA 9MM", damage: 35, ammo: 12, maxAmmo: 12, delay: 280, color: "#555" },
+    { name: "FUZIL DE ASALTO", damage: 22, ammo: 30, maxAmmo: 30, delay: 110, color: "#3a3a2a" }
 ];
 let currentWeapon = 0;
 let lastShot = 0;
+let recoilOffset = 0;
 
 /* ==========================================================================
-   MAPA DO JOGO (1 = Parede/Casa, 2 = Poste/Luz, 0 = Espaço Livre)
+   MAPA DO JOGO
    ========================================================================== */
 const mapWidth = 16, mapHeight = 16;
 const map = [
@@ -108,17 +109,17 @@ const map = [
 ];
 
 /* ==========================================================================
-   INIMIGOS (ZUMBIS)
+   ZUMBIS AJUSTADOS (MENORES E UNIDOS)
    ========================================================================== */
-const sprites = [
-    { x: 3.5, y: 3.5, hp: 100, state: 'alive' },
-    { x: 12.5, y: 4.5, hp: 100, state: 'alive' },
-    { x: 8.5, y: 10.5, hp: 100, state: 'alive' },
-    { x: 4.5, y: 12.5, hp: 100, state: 'alive' }
+const zombies = [
+    { x: 3.5, y: 3.5, hp: 60, state: 'alive', speed: 0.02 },
+    { x: 12.5, y: 4.5, hp: 60, state: 'alive', speed: 0.022 },
+    { x: 8.5, y: 10.5, hp: 60, state: 'alive', speed: 0.018 },
+    { x: 4.5, y: 12.5, hp: 60, state: 'alive', speed: 0.025 }
 ];
 
 /* ==========================================================================
-   CONTROLES (TOUCH / JOYSTICK)
+   CONTROLES (MOBILE TOUCH / JOYSTICK)
    ========================================================================== */
 const joy = document.getElementById("joy");
 const knob = document.getElementById("knob");
@@ -151,7 +152,6 @@ window.addEventListener("pointermove", e => {
     const dx = e.clientX - lastTouchX;
     lastTouchX = e.clientX;
     
-    // Rotação da Câmera
     const rotSpeed = dx * 0.005;
     const oldDirX = player.dirX;
     player.dirX = player.dirX * Math.cos(rotSpeed) - player.dirY * Math.sin(rotSpeed);
@@ -163,7 +163,7 @@ window.addEventListener("pointermove", e => {
 window.addEventListener("pointerup", () => looking = false);
 
 /* ==========================================================================
-   SISTEMA DE TIRO
+   TIRO E RECUO DA ARMA
    ========================================================================== */
 document.getElementById("fire").onclick = () => {
     const w = weapons[currentWeapon];
@@ -173,22 +173,23 @@ document.getElementById("fire").onclick = () => {
 
     lastShot = now;
     w.ammo--;
+    recoilOffset = 18; // Animação de coice da arma
     updateHUD();
 
-    // Checar acerto nos Zumbis
-    sprites.forEach(s => {
-        if (s.state !== 'alive') return;
-        const dx = s.x - (player.x / 64);
-        const dy = s.y - (player.y / 64);
+    // Sistema de Dano Raycast no Zumbi
+    zombies.forEach(z => {
+        if (z.state !== 'alive') return;
+        const dx = z.x - (player.x / 64);
+        const dy = z.y - (player.y / 64);
         const angle = Math.atan2(dy, dx);
         const pAngle = Math.atan2(player.dirY, player.dirX);
         let diff = Math.abs(angle - pAngle);
         if (diff > Math.PI) diff = Math.PI * 2 - diff;
 
-        if (diff < 0.3) {
-            s.hp -= w.damage;
-            if (s.hp <= 0) {
-                s.state = 'dead';
+        if (diff < 0.28) {
+            z.hp -= w.damage;
+            if (z.hp <= 0) {
+                z.state = 'dead';
                 player.kills++;
                 document.getElementById("kills").innerText = player.kills;
             }
@@ -208,10 +209,10 @@ function updateHUD() {
 }
 
 /* ==========================================================================
-   RENDERIZADOR RAYCASTING 3D
+   RENDERIZADOR 3D E IA DOS ZUMBIS
    ========================================================================== */
 function render() {
-    // Movimentação
+    // Movimento do Jogador
     const moveSpeed = 0.05;
     if (joyY !== 0 || joyX !== 0) {
         const moveX = (player.dirX * -joyY + player.planeX * joyX) * moveSpeed * 64;
@@ -220,15 +221,36 @@ function render() {
         const newGridX = Math.floor((player.x + moveX) / 64);
         const newGridY = Math.floor((player.y + moveY) / 64);
 
-        if (map[newGridY * mapWidth + Math.floor(player.x / 64)] === 0) player.y += moveY;
         if (map[Math.floor(player.y / 64) * mapWidth + newGridX] === 0) player.x += moveX;
+        if (map[newGridY * mapWidth + Math.floor(player.x / 64)] === 0) player.y += moveY;
     }
 
-    // Teto e Chão (Estilo Newdark)
-    ctx.fillStyle = "#05070a"; ctx.fillRect(0, 0, canvas.width, canvas.height / 2);
-    ctx.fillStyle = "#11161b"; ctx.fillRect(0, canvas.height / 2, canvas.width, canvas.height / 2);
+    // IA dos Zumbis: Anda na direção do Jogador mantendo posição vertical fixa
+    zombies.forEach(z => {
+        if (z.state !== 'alive') return;
+        const px = player.x / 64;
+        const py = player.y / 64;
+        const dx = px - z.x;
+        const dy = py - z.y;
+        const dist = Math.hypot(dx, dy);
 
-    // Renderizar Paredes 3D
+        // Mantém distância física (sem deitar nem ultrapassar)
+        if (dist > 0.6) {
+            z.x += (dx / dist) * z.speed;
+            z.y += (dy / dist) * z.speed;
+        } else {
+            // Dano de ataque no Jogador
+            player.hp -= 0.3;
+            if (player.hp < 0) player.hp = 0;
+            document.getElementById("hp").style.width = player.hp + "%";
+        }
+    });
+
+    // Renderizar Céu/Teto Noturno e Chão Newdark
+    ctx.fillStyle = "#080b10"; ctx.fillRect(0, 0, canvas.width, canvas.height / 2);
+    ctx.fillStyle = "#12161a"; ctx.fillRect(0, canvas.height / 2, canvas.width, canvas.height / 2);
+
+    // Paredes 3D (Raycasting)
     const w = canvas.width;
     for (let x = 0; x < w; x += 2) {
         const cameraX = 2 * x / w - 1;
@@ -262,17 +284,15 @@ function render() {
         let drawStart = -lineHeight / 2 + canvas.height / 2;
         let drawEnd = lineHeight / 2 + canvas.height / 2;
 
-        // Sombreamento por Distância (Efeito de Escuridão)
-        let color = side === 1 ? "#1e2833" : "#2a3746";
-        ctx.fillStyle = color;
+        ctx.fillStyle = side === 1 ? "#1a232c" : "#24313e";
         ctx.fillRect(x, drawStart, 2, drawEnd - drawStart);
     }
 
-    // Renderizar Zumbis 3D
-    sprites.forEach(s => {
-        if (s.state !== 'alive') return;
-        const spriteX = s.x - (player.x / 64);
-        const spriteY = s.y - (player.y / 64);
+    // Renderizar Zumbis (Com Rosto, Olhos, Boca e Corpo Unificado)
+    zombies.forEach(z => {
+        if (z.state !== 'alive') return;
+        const spriteX = z.x - (player.x / 64);
+        const spriteY = z.y - (player.y / 64);
 
         const invDet = 1.0 / (player.planeX * player.dirY - player.dirX * player.planeY);
         const transformX = invDet * (player.dirY * spriteX - player.dirX * spriteY);
@@ -280,16 +300,54 @@ function render() {
 
         if (transformY > 0) {
             const spriteScreenX = Math.floor((canvas.width / 2) * (1 + transformX / transformY));
-            const spriteHeight = Math.abs(Math.floor(canvas.height / transformY));
-            
-            ctx.fillStyle = "#2e7d32";
-            ctx.fillRect(spriteScreenX - spriteHeight / 4, canvas.height / 2 - spriteHeight / 2, spriteHeight / 2, spriteHeight);
-            
-            // Olhos vermelhos do Zumbi
-            ctx.fillStyle = "#ff0000";
-            ctx.fillRect(spriteScreenX - 5, canvas.height / 2 - spriteHeight / 3, 10, 4);
+            // Tamanho ajustado (Zombie menor/humanoide)
+            const h = Math.abs(Math.floor((canvas.height / transformY) * 0.7));
+            const w = h / 2;
+
+            const topY = canvas.height / 2 - h / 2;
+            const leftX = spriteScreenX - w / 2;
+
+            // 1. Torso
+            ctx.fillStyle = "#2c3e35";
+            ctx.fillRect(leftX + w * 0.2, topY + h * 0.35, w * 0.6, h * 0.4);
+
+            // 2. Pernas (Conectadas ao corpo)
+            ctx.fillStyle = "#1b2420";
+            ctx.fillRect(leftX + w * 0.22, topY + h * 0.75, w * 0.22, h * 0.25);
+            ctx.fillRect(leftX + w * 0.56, topY + h * 0.75, w * 0.22, h * 0.25);
+
+            // 3. Braços (Fixos ao tronco, estendidos na sua direção)
+            ctx.fillStyle = "#3b5245";
+            ctx.fillRect(leftX + w * 0.05, topY + h * 0.38, w * 0.15, h * 0.3);
+            ctx.fillRect(leftX + w * 0.8, topY + h * 0.38, w * 0.15, h * 0.3);
+
+            // 4. Cabeça
+            ctx.fillStyle = "#4a6b58";
+            ctx.fillRect(leftX + w * 0.25, topY, w * 0.5, h * 0.35);
+
+            // 5. Rosto (Olhos vermelhos e Boca)
+            ctx.fillStyle = "#ff1111"; // Olho esquerdo
+            ctx.fillRect(leftX + w * 0.32, topY + h * 0.1, w * 0.12, h * 0.07);
+            ctx.fillRect(leftX + w * 0.56, topY + h * 0.1, w * 0.12, h * 0.07); // Olho direito
+
+            ctx.fillStyle = "#110505"; // Boca aberta
+            ctx.fillRect(leftX + w * 0.38, topY + h * 0.22, w * 0.24, h * 0.07);
         }
     });
+
+    // Modelagem HD da Arma em 1ª Pessoa
+    if (recoilOffset > 0) recoilOffset -= 2;
+    const gunX = canvas.width / 2;
+    const gunY = canvas.height + recoilOffset;
+    const curW = weapons[currentWeapon];
+
+    // Corpo e Cano da Arma
+    ctx.fillStyle = curW.color;
+    ctx.fillRect(gunX - 25, gunY - 100, 50, 100);
+    ctx.fillStyle = "#1a1a1a";
+    ctx.fillRect(gunX - 10, gunY - 170, 20, 80); // Cano longo
+    ctx.fillStyle = "#000";
+    ctx.fillRect(gunX - 12, gunY - 175, 24, 10); // Mira frontal
 
     requestAnimationFrame(render);
 }
