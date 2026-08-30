@@ -1,963 +1,284 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>NEW DARK V17</title>
-
-<style>
-html,body{
-    margin:0;
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    background:#101820;
-    font-family:Arial;
-}
-
-canvas{
-    display:block;
-    touch-action:none;
-}
-
-#menu{
-    position:fixed;
-    inset:0;
-    z-index:10;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    color:white;
-    background:linear-gradient(#07111d,#172c3d);
-}
-
-#menu h1{
-    font-size:48px;
-    letter-spacing:5px;
-    margin:0 0 10px;
-}
-
-button{
-    border:2px solid white;
-    border-radius:12px;
-    background:#17486b;
-    color:white;
-    padding:15px 25px;
-    font-weight:bold;
-    font-size:18px;
-}
-
-#hud{
-    display:none;
-    position:fixed;
-    top:10px;
-    left:10px;
-    z-index:5;
-    color:white;
-    font-weight:bold;
-    text-shadow:2px 2px 4px black;
-}
-
-#bar{
-    width:170px;
-    height:17px;
-    border:2px solid white;
-    background:#333;
-}
-
-#hp{
-    width:100%;
-    height:100%;
-    background:#21d65a;
-}
-
-#cross{
-    display:none;
-    position:fixed;
-    left:50%;
-    top:50%;
-    transform:translate(-50%,-50%);
-    z-index:5;
-    color:white;
-    font-size:30px;
-    text-shadow:0 0 5px black;
-}
-
-#fire{
-    display:none;
-    position:fixed;
-    right:20px;
-    bottom:25px;
-    z-index:6;
-    width:90px;
-    height:90px;
-    border-radius:50%;
-    background:#9b2222;
-}
-
-#joy{
-    display:none;
-    position:fixed;
-    left:20px;
-    bottom:20px;
-    z-index:6;
-    width:120px;
-    height:120px;
-    border:3px solid #ffffff55;
-    border-radius:50%;
-    background:#ffffff15;
-}
-
-#knob{
-    position:absolute;
-    left:34px;
-    top:34px;
-    width:52px;
-    height:52px;
-    border-radius:50%;
-    background:#ffffff88;
-}
-
-#gameover{
-    display:none;
-    position:fixed;
-    inset:0;
-    z-index:20;
-    color:white;
-    background:#000c;
-    justify-content:center;
-    align-items:center;
-    flex-direction:column;
-    text-align:center;
-}
-</style>
-</head>
-
-<body>
-
-<div id="menu">
-    <h1>NEW DARK</h1>
-    <p>V17 • SURVIVAL</p>
-    <button id="start">JOGAR</button>
-</div>
-
-<div id="hud">
-    VIDA
-    <div id="bar"><div id="hp"></div></div>
-    🧟 <span id="kills">0</span>
-</div>
-
-<div id="cross">+</div>
-
-<button id="fire">🔫<br>ATIRAR</button>
-
-<div id="joy">
-    <div id="knob"></div>
-</div>
-
-<div id="gameover">
-    <h1>VOCÊ MORREU</h1>
-    <p>Zumbis eliminados: <span id="finalKills">0</span></p>
-    <button onclick="location.reload()">JOGAR NOVAMENTE</button>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-
-<script>
-"use strict";
-
-/* =========================
-   VERIFICAÇÃO
-========================= */
-
-if(typeof THREE === "undefined"){
-    document.body.innerHTML =
-    "<div style='color:white;background:#111;height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;font-size:20px;padding:20px'>" +
-    "Não foi possível carregar o motor 3D.<br><br>" +
-    "Verifique se o aparelho está conectado à internet e abra o arquivo novamente." +
-    "</div>";
-    throw new Error("Three.js não carregou");
-}
-
-/* =========================
-   CENA
-========================= */
-
-const scene = new THREE.Scene();
-
-scene.background = new THREE.Color(0x08111c);
-
-scene.fog = new THREE.Fog(
-    0x08111c,
-    40,
-    500
-);
-
-/* =========================
-   CÂMERA
-========================= */
-
-const camera = new THREE.PerspectiveCamera(
-    70,
-    innerWidth / innerHeight,
-    0.1,
-    1000
-);
-
-camera.position.set(0,2,5);
-
-/* =========================
-   RENDER
-========================= */
-
-const renderer = new THREE.WebGLRenderer({
-    antialias:true
-});
-
-renderer.setSize(innerWidth,innerHeight);
-renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
-
-renderer.shadowMap.enabled = true;
-
-document.body.appendChild(renderer.domElement);
-
-/* =========================
-   LUZ
-========================= */
-
-const moonLight = new THREE.DirectionalLight(
-    0x9fc7ff,
-    2
-);
-
-moonLight.position.set(
-    -100,
-    200,
-    -100
-);
-
-moonLight.castShadow = true;
-
-scene.add(moonLight);
-
-scene.add(
-    new THREE.HemisphereLight(
-        0x557799,
-        0x101810,
-        1.2
-    )
-);
-
-/* =========================
-   LUA
-========================= */
-
-const moon = new THREE.Mesh(
-    new THREE.SphereGeometry(18,32,32),
-    new THREE.MeshBasicMaterial({
-        color:0xffffff
-    })
-);
-
-moon.position.set(
-    -180,
-    180,
-    -300
-);
-
-scene.add(moon);
-
-/* =========================
-   CHÃO
-========================= */
-
-const ground = new THREE.Mesh(
-    new THREE.PlaneGeometry(1200,1200),
-    new THREE.MeshStandardMaterial({
-        color:0x30452d,
-        roughness:1
-    })
-);
-
-ground.rotation.x = -Math.PI/2;
-ground.receiveShadow = true;
-
-scene.add(ground);
-
-/* =========================
-   ESTRADA
-========================= */
-
-const road = new THREE.Mesh(
-    new THREE.PlaneGeometry(50,1000),
-    new THREE.MeshStandardMaterial({
-        color:0x25292c
-    })
-);
-
-road.rotation.x = -Math.PI/2;
-road.position.y = 0.01;
-
-scene.add(road);
-
-/* =========================
-   PLAYER
-========================= */
-
-const player = {
-    x:0,
-    z:5,
-    angle:0,
-    pitch:0,
-    health:100
-};
-
-/* =========================
-   ZUMBIS
-========================= */
-
-const zombies = [];
-
-function createZombie(x,z){
-
-    const g = new THREE.Group();
-
-    /* pernas */
-
-    const pantsMat = new THREE.MeshStandardMaterial({
-        color:0x20252b
-    });
-
-    const skinMat = new THREE.MeshStandardMaterial({
-        color:0x71846b
-    });
-
-    const shirtMat = new THREE.MeshStandardMaterial({
-        color:0x3d513f
-    });
-
-    const shoeMat = new THREE.MeshStandardMaterial({
-        color:0x111111
-    });
-
-    const legGeo = new THREE.BoxGeometry(
-        0.32,1.4,0.32
-    );
-
-    const leftLeg = new THREE.Mesh(
-        legGeo,pantsMat
-    );
-
-    const rightLeg = new THREE.Mesh(
-        legGeo,pantsMat
-    );
-
-    leftLeg.position.set(-0.22,0.7,0);
-    rightLeg.position.set(0.22,0.7,0);
-
-    g.add(leftLeg);
-    g.add(rightLeg);
-
-    /* pés */
-
-    const footGeo = new THREE.BoxGeometry(
-        0.4,0.22,0.65
-    );
-
-    const lf = new THREE.Mesh(
-        footGeo,shoeMat
-    );
-
-    const rf = new THREE.Mesh(
-        footGeo,shoeMat
-    );
-
-    lf.position.set(-0.22,0.08,-0.15);
-    rf.position.set(0.22,0.08,-0.15);
-
-    g.add(lf,rf);
-
-    /* corpo */
-
-    const body = new THREE.Mesh(
-        new THREE.BoxGeometry(
-            0.9,1.4,0.55
-        ),
-        shirtMat
-    );
-
-    body.position.y = 1.8;
-
-    g.add(body);
-
-    /* cabeça */
-
-    const head = new THREE.Mesh(
-        new THREE.SphereGeometry(
-            0.52,20,20
-        ),
-        skinMat
-    );
-
-    head.position.set(
-        0,2.9,0
-    );
-
-    g.add(head);
-
-    /* olhos */
-
-    const eyeMat = new THREE.MeshBasicMaterial({
-        color:0xff1111
-    });
-
-    const eye1 = new THREE.Mesh(
-        new THREE.SphereGeometry(
-            0.07,10,10
-        ),
-        eyeMat
-    );
-
-    const eye2 = eye1.clone();
-
-    eye1.position.set(
-        -0.18,3.0,-0.46
-    );
-
-    eye2.position.set(
-        0.18,3.0,-0.46
-    );
-
-    g.add(eye1,eye2);
-
-    /* boca */
-
-    const mouth = new THREE.Mesh(
-        new THREE.BoxGeometry(
-            0.38,0.12,0.08
-        ),
-        new THREE.MeshBasicMaterial({
-            color:0x180000
-        })
-    );
-
-    mouth.position.set(
-        0,2.75,-0.47
-    );
-
-    g.add(mouth);
-
-    /* braços */
-
-    const armGeo = new THREE.BoxGeometry(
-        0.28,1.2,0.28
-    );
-
-    const leftArm = new THREE.Mesh(
-        armGeo,skinMat
-    );
-
-    const rightArm = new THREE.Mesh(
-        armGeo,skinMat
-    );
-
-    leftArm.position.set(
-        -0.65,1.85,0
-    );
-
-    rightArm.position.set(
-        0.65,1.85,0
-    );
-
-    g.add(leftArm,rightArm);
-
-    /* posição */
-
-    g.position.set(x,0,z);
-
-    scene.add(g);
-
-    zombies.push({
-        mesh:g,
-        leftLeg,
-        rightLeg,
-        leftArm,
-        rightArm,
-        hp:3,
-        phase:Math.random()*10,
-        attack:0
-    });
-}
-
-/* criar zumbis */
-
-for(let i=0;i<20;i++){
-
-    const a =
-        Math.random()*Math.PI*2;
-
-    const d =
-        40+Math.random()*180;
-
-    createZombie(
-        Math.sin(a)*d,
-        Math.cos(a)*d
-    );
-}
-
-/* =========================
-   JOYSTICK
-========================= */
-
-const joy =
-    document.getElementById("joy");
-
-const knob =
-    document.getElementById("knob");
-
-let joyX=0;
-let joyY=0;
-let joyActive=false;
-
-function moveJoy(e){
-
-    const r =
-        joy.getBoundingClientRect();
-
-    let dx =
-        e.clientX -
-        (r.left+r.width/2);
-
-    let dy =
-        e.clientY -
-        (r.top+r.height/2);
-
-    const max=40;
-
-    const dist =
-        Math.hypot(dx,dy);
-
-    if(dist>max){
-        dx=dx/dist*max;
-        dy=dy/dist*max;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AI;
+
+public class GameControllerMobile : MonoBehaviour
+{
+    [Header("--- MOVIMENTAÇÃO MOBILE ---")]
+    public CharacterController controller;
+    public Transform cameraTransform;
+    public float moveSpeed = 4.0f;
+    public float lookSensitivity = 0.2f;
+    public float gravity = -9.81f;
+    private Vector3 velocity;
+    private float xRotation = 0f;
+    private int leftTouchId = -1;
+    private int rightTouchId = -1;
+
+    [Header("--- VIDA DO JOGADOR ---")]
+    public float maxHealth = 100f;
+    public float currentHealth;
+    public bool isPlayerDead = false;
+
+    [Header("--- SISTEMA DE ARMAS ---")]
+    public float gunDamage = 25f;
+    public float gunRange = 100f;
+    public float fireRate = 0.2f;
+    public int maxAmmo = 30;
+    public float reloadTime = 2.0f;
+    public ParticleSystem muzzleFlash;
+    private int currentAmmo;
+    private float nextTimeToFire = 0f;
+    private bool isReloading = false;
+
+    [Header("--- INTERAÇÃO (PORTAS/JANELAS) ---")]
+    public float interactDistance = 3.0f;
+
+    void Start()
+    {
+        if (controller == null) controller = GetComponent<CharacterController>();
+        currentHealth = maxHealth;
+        currentAmmo = maxAmmo;
     }
 
-    joyX=dx/max;
-    joyY=dy/max;
+    void Update()
+    {
+        if (isPlayerDead) return;
 
-    knob.style.left =
-        (34+dx)+"px";
-
-    knob.style.top =
-        (34+dy)+"px";
-}
-
-joy.addEventListener(
-    "pointerdown",
-    e=>{
-        joyActive=true;
-        joy.setPointerCapture(e.pointerId);
-        moveJoy(e);
+        HandleMobileControls();
+        ApplyGravity();
     }
-);
 
-joy.addEventListener(
-    "pointermove",
-    e=>{
-        if(joyActive) moveJoy(e);
-    }
-);
+    // ==========================================
+    // CONTROLES E CÂMERA MOBILE
+    // ==========================================
+    private void HandleMobileControls()
+    {
+        for (int i = 0; i < Input.touchCount; i++)
+        {
+            Touch touch = Input.GetTouch(i);
 
-joy.addEventListener(
-    "pointerup",
-    ()=>{
-        joyActive=false;
-        joyX=0;
-        joyY=0;
-        knob.style.left="34px";
-        knob.style.top="34px";
-    }
-);
+            // Metade Esquerda da Tela: Movimentação
+            if (touch.position.x < Screen.width / 2)
+            {
+                if (touch.phase == TouchPhase.Began) leftTouchId = touch.fingerId;
 
-/* =========================
-   CÂMERA
-========================= */
+                if (touch.fingerId == leftTouchId)
+                {
+                    Vector2 delta = touch.deltaPosition;
+                    Vector3 move = transform.right * delta.x + transform.forward * delta.y;
+                    controller.Move(move * moveSpeed * Time.deltaTime);
 
-let looking=false;
-let lastX=0;
-let lastY=0;
+                    if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
+                        leftTouchId = -1;
+                }
+            }
+            // Metade Direita da Tela: Controle da Câmera
+            else
+            {
+                if (touch.phase == TouchPhase.Began) rightTouchId = touch.fingerId;
 
-renderer.domElement.addEventListener(
-    "pointerdown",
-    e=>{
-        looking=true;
-        lastX=e.clientX;
-        lastY=e.clientY;
-    }
-);
+                if (touch.fingerId == rightTouchId && touch.phase == TouchPhase.Moved)
+                {
+                    float mouseX = touch.deltaPosition.x * lookSensitivity;
+                    float mouseY = touch.deltaPosition.y * lookSensitivity;
 
-renderer.domElement.addEventListener(
-    "pointermove",
-    e=>{
+                    xRotation -= mouseY;
+                    xRotation = Mathf.Clamp(xRotation, -80f, 80f);
 
-        if(!looking)return;
+                    if (cameraTransform != null)
+                        cameraTransform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
 
-        const dx =
-            e.clientX-lastX;
+                    transform.Rotate(Vector3.up * mouseX);
 
-        const dy =
-            e.clientY-lastY;
-
-        lastX=e.clientX;
-        lastY=e.clientY;
-
-        player.angle -= dx*0.004;
-
-        player.pitch -= dy*0.003;
-
-        player.pitch =
-            Math.max(
-                -1,
-                Math.min(1,player.pitch)
-            );
-    }
-);
-
-renderer.domElement.addEventListener(
-    "pointerup",
-    ()=>{
-        looking=false;
-    }
-);
-
-/* =========================
-   MOVIMENTO
-========================= */
-
-function updatePlayer(){
-
-    const speed=0.13;
-
-    const forward=-joyY;
-    const side=joyX;
-
-    const fx =
-        -Math.sin(player.angle);
-
-    const fz =
-        -Math.cos(player.angle);
-
-    const rx =
-        Math.cos(player.angle);
-
-    const rz =
-        -Math.sin(player.angle);
-
-    player.x +=
-        (fx*forward+rx*side)*speed;
-
-    player.z +=
-        (fz*forward+rz*side)*speed;
-
-    camera.position.set(
-        player.x,
-        2,
-        player.z
-    );
-
-    camera.rotation.order="YXZ";
-
-    camera.rotation.y =
-        player.angle;
-
-    camera.rotation.x =
-        player.pitch;
-}
-
-/* =========================
-   ZUMBIS
-========================= */
-
-let kills=0;
-
-function updateZombies(){
-
-    for(const z of zombies){
-
-        const dx =
-            player.x-z.mesh.position.x;
-
-        const dz =
-            player.z-z.mesh.position.z;
-
-        const dist =
-            Math.hypot(dx,dz);
-
-        if(dist>2.5){
-
-            z.mesh.position.x +=
-                dx/dist*0.025;
-
-            z.mesh.position.z +=
-                dz/dist*0.025;
-
-            /*
-             IMPORTANTE:
-             só gira no eixo Y.
-             Isso impede o zumbi de deitar.
-            */
-
-            z.mesh.rotation.y =
-                Math.atan2(dx,dz);
-
-            z.mesh.rotation.x=0;
-            z.mesh.rotation.z=0;
-
-            z.phase+=0.12;
-
-            const walk =
-                Math.sin(z.phase)*0.5;
-
-            z.leftLeg.rotation.x=walk;
-            z.rightLeg.rotation.x=-walk;
-
-            z.leftArm.rotation.x=-walk;
-            z.rightArm.rotation.x=walk;
-
-        }else{
-
-            /* ataque em pé */
-
-            z.mesh.rotation.x=0;
-            z.mesh.rotation.z=0;
-
-            z.mesh.rotation.y =
-                Math.atan2(dx,dz);
-
-            z.attack++;
-
-            const attackMove =
-                Math.sin(z.attack*0.2)*0.2;
-
-            z.leftArm.rotation.x =
-                -1.2+attackMove;
-
-            z.rightArm.rotation.x =
-                -1.2-attackMove;
-
-            if(z.attack%90===0){
-
-                player.health-=5;
-
-                document.getElementById("hp")
-                    .style.width =
-                    Math.max(
-                        0,
-                        player.health
-                    )+"%";
-
-                if(player.health<=0){
-                    gameOver();
+                    if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
+                        rightTouchId = -1;
                 }
             }
         }
     }
-}
 
-/* =========================
-   TIRO
-========================= */
+    private void ApplyGravity()
+    {
+        if (controller.isGrounded && velocity.y < 0)
+        {
+            velocity.y = -2f;
+        }
 
-let firing=false;
+        velocity.y += gravity * Time.deltaTime;
+        controller.Move(velocity * Time.deltaTime);
+    }
 
-function shoot(){
+    // ==========================================
+    // SISTEMA DE TIRO E RECARGA
+    // Vincule esta função a um botão de interface (UI Button)
+    // ==========================================
+    public void ShootButton()
+    {
+        if (isReloading || currentAmmo <= 0 || Time.time < nextTimeToFire || isPlayerDead) return;
 
-    const direction =
-        new THREE.Vector3();
+        nextTimeToFire = Time.time + fireRate;
+        currentAmmo--;
 
-    camera.getWorldDirection(
-        direction
-    );
+        if (muzzleFlash != null) muzzleFlash.Play();
 
-    const ray =
-        new THREE.Raycaster(
-            camera.position.clone(),
-            direction,
-            0,
-            250
-        );
-
-    const targets =
-        zombies.map(z=>z.mesh);
-
-    const hits =
-        ray.intersectObjects(
-            targets,
-            true
-        );
-
-    if(hits.length){
-
-        let obj=hits[0].object;
-
-        let target=null;
-
-        for(const z of zombies){
-
-            if(z.mesh===obj ||
-               z.mesh.children.includes(obj)){
-
-                target=z;
-                break;
+        RaycastHit hit;
+        if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, gunRange))
+        {
+            // Tenta causar dano no Zumbi atingido
+            ZombieEntity zombie = hit.transform.GetComponent<ZombieEntity>();
+            if (zombie != null)
+            {
+                zombie.TakeDamage(gunDamage);
             }
         }
 
-        if(target){
+        if (currentAmmo <= 0)
+        {
+            StartCoroutine(ReloadWeapon());
+        }
+    }
 
-            target.hp--;
+    private IEnumerator ReloadWeapon()
+    {
+        isReloading = true;
+        yield return new WaitForSeconds(reloadTime);
+        currentAmmo = maxAmmo;
+        isReloading = false;
+    }
 
-            if(target.hp<=0){
-
-                scene.remove(
-                    target.mesh
-                );
-
-                const index =
-                    zombies.indexOf(target);
-
-                if(index>=0)
-                    zombies.splice(index,1);
-
-                kills++;
-
-                document.getElementById(
-                    "kills"
-                ).textContent=kills;
+    // ==========================================
+    // INTERAÇÃO COM PORTAS E JANELAS
+    // Vincule esta função a um botão de interagir na tela
+    // ==========================================
+    public void InteractButton()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, interactDistance))
+        {
+            InteractiveObject doorOrWindow = hit.transform.GetComponent<InteractiveObject>();
+            if (doorOrWindow != null)
+            {
+                doorOrWindow.ToggleState();
             }
+        }
+    }
+
+    // ==========================================
+    // RECEBER DANO DOS ZUMBIS
+    // ==========================================
+    public void PlayerTakeDamage(float damageAmount)
+    {
+        if (isPlayerDead) return;
+
+        currentHealth -= damageAmount;
+        if (currentHealth <= 0)
+        {
+            currentHealth = 0;
+            isPlayerDead = true;
+            Debug.Log("GAME OVER: O jogador morreu!");
         }
     }
 }
 
-/* =========================
-   BOTÃO TIRO
-========================= */
+// ==========================================
+// CLASSE DOS ZUMBIS (Anexe aos Inimigos 3D)
+// ==========================================
+public class ZombieEntity : MonoBehaviour
+{
+    [Header("Configurações do Zumbi")]
+    public NavMeshAgent agent;
+    public Transform playerTarget;
+    public float health = 100f;
+    public float attackRange = 1.8f;
+    public float attackDamage = 15f;
+    public float attackRate = 1.5f;
 
-const fire =
-    document.getElementById("fire");
+    private float nextAttackTime = 0f;
+    private bool isDead = false;
 
-fire.addEventListener(
-    "pointerdown",
-    ()=>{
-        firing=true;
-        shoot();
+    void Start()
+    {
+        if (agent == null) agent = GetComponent<NavMeshAgent>();
+        if (playerTarget == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null) playerTarget = playerObj.transform;
+        }
     }
-);
 
-fire.addEventListener(
-    "pointerup",
-    ()=>{
-        firing=false;
+    void Update()
+    {
+        if (isDead || playerTarget == null) return;
+
+        float distance = Vector3.Distance(transform.position, playerTarget.position);
+
+        if (distance <= attackRange)
+        {
+            agent.isStopped = true;
+            if (Time.time >= nextAttackTime)
+            {
+                ExecuteAttack();
+                nextAttackTime = Time.time + attackRate;
+            }
+        }
+        else
+        {
+            agent.isStopped = false;
+            agent.SetDestination(playerTarget.position);
+        }
     }
-);
 
-/* =========================
-   GAME OVER
-========================= */
+    private void ExecuteAttack()
+    {
+        GameControllerMobile playerScript = playerTarget.GetComponent<GameControllerMobile>();
+        if (playerScript != null)
+        {
+            playerScript.PlayerTakeDamage(attackDamage);
+        }
+    }
 
-let dead=false;
+    public void TakeDamage(float amount)
+    {
+        if (isDead) return;
 
-function gameOver(){
-
-    if(dead)return;
-
-    dead=true;
-
-    document.getElementById(
-        "finalKills"
-    ).textContent=kills;
-
-    document.getElementById(
-        "gameover"
-    ).style.display="flex";
+        health -= amount;
+        if (health <= 0f)
+        {
+            isDead = true;
+            agent.enabled = false;
+            GetComponent<Collider>().enabled = false;
+            Destroy(gameObject, 3.0f);
+        }
+    }
 }
 
-/* =========================
-   JOGAR
-========================= */
+// ==========================================
+// CLASSE DE PORTAS E JANELAS (Anexe nos Objetos Interativos)
+// ==========================================
+public class InteractiveObject : MonoBehaviour
+{
+    public float openAngle = 90f;
+    public float speed = 3f;
+    private bool isOpen = false;
+    private Quaternion defaultRotation;
+    private Quaternion openRotation;
 
-document.getElementById("start")
-.addEventListener(
-    "click",
-    ()=>{
-
-        document.getElementById(
-            "menu"
-        ).style.display="none";
-
-        document.getElementById(
-            "hud"
-        ).style.display="block";
-
-        document.getElementById(
-            "cross"
-        ).style.display="block";
-
-        document.getElementById(
-            "fire"
-        ).style.display="block";
-
-        document.getElementById(
-            "joy"
-        ).style.display="block";
-    }
-);
-
-/* =========================
-   LOOP
-========================= */
-
-function animate(){
-
-    requestAnimationFrame(animate);
-
-    if(!dead){
-
-        updatePlayer();
-        updateZombies();
-
-        if(firing)
-            shoot();
+    void Start()
+    {
+        defaultRotation = transform.localRotation;
+        openRotation = Quaternion.Euler(transform.localEulerAngles + new Vector3(0, openAngle, 0));
     }
 
-    renderer.render(
-        scene,
-        camera
-    );
+    void Update()
+    {
+        Quaternion targetRotation = isOpen ? openRotation : defaultRotation;
+        transform.localRotation = Quaternion.Slerp(transform.localRotation, targetRotation, Time.deltaTime * speed);
+    }
+
+    public void ToggleState()
+    {
+        isOpen = !isOpen;
+    }
 }
-
-animate();
-
-/* =========================
-   RESIZE
-========================= */
-
-window.addEventListener(
-    "resize",
-    ()=>{
-
-        camera.aspect =
-            innerWidth/innerHeight;
-
-        camera.updateProjectionMatrix();
-
-        renderer.setSize(
-            innerWidth,
-            innerHeight
-        );
-    }
-);
-</script>
-
-</body>
-</html>
