@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>NEW DARK V13</title>
+<title>NEW DARK V14</title>
 
 <style>
 *{box-sizing:border-box}
 html,body{
  margin:0;width:100%;height:100%;overflow:hidden;
- background:#76b9ec;font-family:Arial,sans-serif;
+ background:#07101b;font-family:Arial,sans-serif;
  user-select:none
 }
 canvas{display:block;touch-action:none}
@@ -19,7 +19,7 @@ canvas{display:block;touch-action:none}
  display:flex;flex-direction:column;
  justify-content:center;align-items:center;
  color:white;text-align:center;
- background:linear-gradient(#61afe9,#14283d)
+ background:linear-gradient(#071321,#101b29)
 }
 #menu h1{
  font-size:55px;letter-spacing:8px;
@@ -31,7 +31,6 @@ button{
  background:#17486b;color:white;
  padding:13px 20px;font-weight:bold
 }
-
 #hud{
  position:fixed;top:10px;left:10px;
  z-index:30;color:white;font-weight:bold;
@@ -48,30 +47,24 @@ button{
  z-index:30;color:white;font-weight:bold;
  text-shadow:2px 2px 4px #000
 }
-
 #cross{
  position:fixed;left:50%;top:50%;
  transform:translate(-50%,-50%);
  z-index:20;color:white;font-size:27px;
  text-shadow:0 0 5px #000
 }
-
 #damage{
  position:fixed;inset:0;z-index:25;
  pointer-events:none;background:#e00000;
  opacity:0
 }
-
 #scope{
  display:none;position:fixed;inset:0;
  z-index:24;pointer-events:none
 }
 #scope:before{
  content:"";position:absolute;inset:0;
- background:radial-gradient(
- circle,transparent 0 22%,
- rgba(0,0,0,.97) 28%
- )
+ background:radial-gradient(circle,transparent 0 22%,rgba(0,0,0,.97) 28%)
 }
 #scope:after{
  content:"";position:absolute;
@@ -82,65 +75,45 @@ button{
  position:absolute;left:15%;right:15%;
  top:50%;height:2px;background:white
 }
-
 #zoom{
- display:none;
- position:fixed;right:12px;top:48px;
+ display:none;position:fixed;right:12px;top:48px;
  z-index:30;color:white;font-weight:bold
 }
-
 #joy{
  position:fixed;left:18px;bottom:18px;
  width:130px;height:130px;
- border:3px solid #ffffff55;
- border-radius:50%;
- background:#ffffff12;
- z-index:40
+ border:3px solid #ffffff55;border-radius:50%;
+ background:#ffffff12;z-index:40
 }
 #knob{
  position:absolute;left:37px;top:37px;
  width:52px;height:52px;border-radius:50%;
  background:#ffffff88
 }
-
 .action{
  position:fixed;z-index:40;
- width:68px;height:68px;
- border-radius:50%;padding:0
+ width:68px;height:68px;border-radius:50%;padding:0
 }
 #fire{
  right:18px;bottom:18px;
  width:92px;height:92px;background:#941b1b
 }
 #switch{
- right:125px;bottom:105px;
- background:#23577b
+ right:125px;bottom:105px;background:#23577b
 }
 #aim{
- display:none;right:200px;bottom:105px;
- background:#2e5875
+ display:none;right:200px;bottom:105px;background:#2e5875
 }
 #zoomBtn{
- display:none;right:200px;bottom:28px;
- background:#394d5d
+ display:none;right:200px;bottom:28px;background:#394d5d
 }
-
 #mini{
- position:fixed;
- right:10px;
- top:82px;
+ position:fixed;right:10px;top:82px;
  width:105px;height:105px;
- border:2px solid white;
- border-radius:50%;
- overflow:hidden;
- z-index:35;
- background:#52784b;
- opacity:.9
+ border:2px solid white;border-radius:50%;
+ overflow:hidden;z-index:35;background:#17291b;opacity:.9
 }
-#miniCanvas{
- width:100%;height:100%
-}
-
+#miniCanvas{width:100%;height:100%}
 #gameover{display:none}
 </style>
 </head>
@@ -148,46 +121,37 @@ button{
 <body>
 
 <div id="menu">
- <h1>NEW DARK</h1>
- <p>V13 • SURVIVAL</p>
- <button id="start">JOGAR</button>
+<h1>NEW DARK</h1>
+<p>V14 • SURVIVAL NIGHT</p>
+<button id="start">JOGAR</button>
 </div>
 
 <div id="hud">
- VIDA
- <div id="bar"><div id="hp"></div></div>
- 🧟 <span id="kills">0</span>
+VIDA
+<div id="bar"><div id="hp"></div></div>
+🧟 <span id="kills">0</span>
 </div>
 
 <div id="weapon">PISTOLA</div>
-
 <div id="cross">+</div>
 
-<div id="scope">
- <div id="scopeLine"></div>
-</div>
-
+<div id="scope"><div id="scopeLine"></div></div>
 <div id="zoom">ZOOM 1X</div>
-
 <div id="damage"></div>
 
-<div id="joy">
- <div id="knob"></div>
-</div>
+<div id="joy"><div id="knob"></div></div>
 
 <button id="fire" class="action">🔫<br>ATIRAR</button>
 <button id="switch" class="action">🔄</button>
 <button id="aim" class="action">🎯</button>
 <button id="zoomBtn" class="action">🔭</button>
 
-<div id="mini">
- <canvas id="miniCanvas"></canvas>
-</div>
+<div id="mini"><canvas id="miniCanvas"></canvas></div>
 
 <div id="gameover">
- <h1>VOCÊ MORREU</h1>
- <p>Zumbis eliminados: <span id="finalKills">0</span></p>
- <button onclick="location.reload()">JOGAR NOVAMENTE</button>
+<h1>VOCÊ MORREU</h1>
+<p>Zumbis eliminados: <span id="finalKills">0</span></p>
+<button onclick="location.reload()">JOGAR NOVAMENTE</button>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
@@ -195,22 +159,19 @@ button{
 <script>
 
 /* =========================================================
-   CENA
+   CENA 3D
 ========================================================= */
 
 const scene=new THREE.Scene();
 
-scene.background=new THREE.Color(0x76baf0);
+scene.background=new THREE.Color(0x071321);
 
 scene.fog=new THREE.Fog(
- 0x76baf0,80,750
+ 0x071321,90,750
 );
 
 const camera=new THREE.PerspectiveCamera(
- 70,
- innerWidth/innerHeight,
- .05,
- 1500
+ 72,innerWidth/innerHeight,.05,1500
 );
 
 const renderer=new THREE.WebGLRenderer({
@@ -227,28 +188,40 @@ renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 document.body.appendChild(renderer.domElement);
 
 /* =========================================================
-   ILUMINAÇÃO
+   ILUMINAÇÃO NOTURNA
 ========================================================= */
 
 scene.add(
  new THREE.HemisphereLight(
-  0xbfe8ff,
-  0x45583b,
-  1.5
+  0x304d72,
+  0x172013,
+  1.1
  )
 );
 
-const sun=new THREE.DirectionalLight(
-  0xffffff,3
+const moonLight=new THREE.DirectionalLight(
+  0x9dbbe8,1.8
 );
 
-sun.position.set(-180,300,-180);
-sun.castShadow=true;
+moonLight.position.set(-180,300,-180);
+moonLight.castShadow=true;
 
-sun.shadow.mapSize.width=2048;
-sun.shadow.mapSize.height=2048;
+moonLight.shadow.mapSize.width=2048;
+moonLight.shadow.mapSize.height=2048;
 
-scene.add(sun);
+scene.add(moonLight);
+
+/* LUA */
+
+const moon=new THREE.Mesh(
+ new THREE.SphereGeometry(32,32,32),
+ new THREE.MeshBasicMaterial({
+  color:0xe9edf4
+ })
+);
+
+moon.position.set(260,300,-400);
+scene.add(moon);
 
 /* =========================================================
    TERRENO
@@ -257,14 +230,13 @@ scene.add(sun);
 const ground=new THREE.Mesh(
  new THREE.PlaneGeometry(2200,2200),
  new THREE.MeshStandardMaterial({
-  color:0x4e7047,
+  color:0x263b28,
   roughness:1
  })
 );
 
 ground.rotation.x=-Math.PI/2;
 ground.receiveShadow=true;
-
 scene.add(ground);
 
 /* =========================================================
@@ -276,14 +248,13 @@ function road(x,z,w,d){
 const r=new THREE.Mesh(
  new THREE.BoxGeometry(w,.08,d),
  new THREE.MeshStandardMaterial({
-  color:0x42474a,
+  color:0x292d30,
   roughness:.95
  })
 );
 
 r.position.set(x,.04,z);
 r.receiveShadow=true;
-
 scene.add(r);
 }
 
@@ -297,10 +268,7 @@ road(0,0,1100,55);
 const walls=[];
 
 function addCollision(x,z,w,d){
-
-walls.push({
- x,z,w,d
- });
+ walls.push({x,z,w,d});
 }
 
 function blocked(x,z){
@@ -316,7 +284,7 @@ return walls.some(c=>
 }
 
 /* =========================================================
-   CASAS COM PORTAS
+   CASAS
 ========================================================= */
 
 const doors=[];
@@ -325,11 +293,8 @@ function createHouse(x,z,w,d,h){
 
 const g=new THREE.Group();
 
-/* paredes */
-
-const wallMat=
-new THREE.MeshStandardMaterial({
- color:0x96705a,
+const wallMat=new THREE.MeshStandardMaterial({
+ color:0x765746,
  roughness:.9
 });
 
@@ -341,128 +306,100 @@ const wall=new THREE.Mesh(
 wall.position.y=h/2;
 wall.castShadow=true;
 wall.receiveShadow=true;
-
 g.add(wall);
 
 /* telhado */
 
 const roof=new THREE.Mesh(
  new THREE.ConeGeometry(
-  Math.max(w,d)*.7,
-  5,
-  4
+  Math.max(w,d)*.7,5,4
  ),
  new THREE.MeshStandardMaterial({
-  color:0x35302d,
+  color:0x242326,
   roughness:.8
- )
+ })
 );
 
 roof.rotation.y=Math.PI/4;
 roof.position.y=h+2.5;
 roof.castShadow=true;
-
 g.add(roof);
 
-/* porta */
+/* PORTA */
 
 const door=new THREE.Mesh(
- new THREE.BoxGeometry(
-  2.2,3.5,.18
- ),
+ new THREE.BoxGeometry(2.4,3.7,.2),
  new THREE.MeshStandardMaterial({
-  color:0x4c2d1c,
+  color:0x3a2115,
   roughness:.8
  })
 );
 
-door.position.set(
- 0,1.75,d/2+.12
-);
-
-door.userData.open=false;
-
+door.position.set(0,1.85,d/2+.13);
 g.add(door);
 
 /* maçaneta */
 
 const handle=new THREE.Mesh(
- new THREE.SphereGeometry(.09,10,10),
+ new THREE.SphereGeometry(.1,10,10),
  new THREE.MeshStandardMaterial({
-  color:0xd5ad4a,
+  color:0xd6aa4c,
   metalness:.8
  })
 );
 
-handle.position.set(
- .65,1.75,d/2+.25
-);
-
+handle.position.set(.68,1.85,d/2+.25);
 g.add(handle);
 
-/* janela */
+/* janelas */
 
 for(const side of [-1,1]){
 
 const win=new THREE.Mesh(
- new THREE.BoxGeometry(
-  2.5,1.5,.1
- ),
+ new THREE.BoxGeometry(2.6,1.6,.1),
  new THREE.MeshStandardMaterial({
-  color:0x65b5e4,
-  roughness:.2,
-  metalness:.1
+  color:0x315f78,
+  emissive:0x101f29,
+  roughness:.2
  })
 );
 
 win.position.set(
- side*w*.27,
- h*.58,
- d/2+.08
+ side*w*.27,h*.58,d/2+.08
 );
 
 g.add(win);
 }
 
-/* luz interna */
+/* luz dentro */
 
 const insideLight=new THREE.PointLight(
- 0xffd98a,
- 5,
- 18
+ 0xffb84c,7,20
 );
 
-insideLight.position.set(
- 0,h*.55,0
-);
-
+insideLight.position.set(0,h*.55,0);
 g.add(insideLight);
 
-/* piso */
+/* chão */
 
 const floor=new THREE.Mesh(
- new THREE.BoxGeometry(
-  w-.4,.1,d-.4
- ),
+ new THREE.BoxGeometry(w-.4,.1,d-.4),
  new THREE.MeshStandardMaterial({
-  color:0x765b4b
+  color:0x594334
  })
 );
 
 floor.position.y=.05;
-
 g.add(floor);
 
-/* escada interna */
+/* ESCADA */
 
-for(let i=0;i<7;i++){
+for(let i=0;i<8;i++){
 
 const step=new THREE.Mesh(
- new THREE.BoxGeometry(
-  2.8,.35,1
- ),
+ new THREE.BoxGeometry(3,.35,1),
  new THREE.MeshStandardMaterial({
-  color:0x604433
+  color:0x543a2a
  })
 );
 
@@ -476,45 +413,29 @@ g.add(step);
 }
 
 g.position.set(x,0,z);
-
 scene.add(g);
 
-/* colisões deixam a frente aberta */
-addCollision(
- x,z-d/2,
- w,.4
-);
+/* colisões - deixa a frente aberta para entrar */
 
-addCollision(
- x-w/2,z,
- .4,d
-);
-
-addCollision(
- x+w/2,z,
- .4,d
-);
-
-addCollision(
- x,z+d/2,
- (w-2.8),.4
-);
+addCollision(x,z-d/2,w,.4);
+addCollision(x-w/2,z,.4,d);
+addCollision(x+w/2,z,.4,d);
+addCollision(x,z+d/2,w-3.2,.4);
 
 doors.push({
  mesh:door,
  x:x,
  z:z+d/2,
  open:false
- });
+});
 }
 
-/* casas */
+/* CASAS */
 
 createHouse(-70,-80,34,30,16);
 createHouse(70,-80,34,30,17);
 createHouse(-75,80,36,31,17);
 createHouse(75,80,36,31,18);
-
 createHouse(-155,-115,42,35,22);
 createHouse(155,-115,42,35,23);
 
@@ -527,7 +448,7 @@ function building(x,z,w,d,h){
 const b=new THREE.Mesh(
  new THREE.BoxGeometry(w,h,d),
  new THREE.MeshStandardMaterial({
-  color:0x70767a,
+  color:0x4d5358,
   roughness:.85
  })
 );
@@ -535,31 +456,24 @@ const b=new THREE.Mesh(
 b.position.set(x,h/2,z);
 b.castShadow=true;
 b.receiveShadow=true;
-
 scene.add(b);
 
 addCollision(x,z,w,d);
-
-/* janelas */
 
 for(let y=5;y<h-2;y+=5){
 
 for(let xx=-w/2+4;xx<w/2-3;xx+=6){
 
 const win=new THREE.Mesh(
- new THREE.BoxGeometry(
-  2.2,2.2,.08
- ),
+ new THREE.BoxGeometry(2.2,2.2,.08),
  new THREE.MeshStandardMaterial({
-  color:0x68b1db,
-  roughness:.2
+  color:0x39718f,
+  emissive:0x08151d
  })
 );
 
 win.position.set(
- x+xx,
- y,
- z-d/2-.06
+ x+xx,y,z-d/2-.06
 );
 
 scene.add(win);
@@ -573,15 +487,13 @@ building(-225,80,52,48,42);
 building(225,85,55,45,50);
 
 /* =========================================================
-   POSTES
+   POSTES COM LUZ
 ========================================================= */
 
 function createLamp(x,z){
 
 const pole=new THREE.Mesh(
- new THREE.CylinderGeometry(
-  .12,.16,7,12
- ),
+ new THREE.CylinderGeometry(.12,.16,7,12),
  new THREE.MeshStandardMaterial({
   color:0x292d30,
   metalness:.7
@@ -590,20 +502,26 @@ const pole=new THREE.Mesh(
 
 pole.position.set(x,3.5,z);
 pole.castShadow=true;
-
 scene.add(pole);
 
 const bulb=new THREE.Mesh(
  new THREE.SphereGeometry(.25,12,12),
  new THREE.MeshStandardMaterial({
   color:0xffe6a3,
-  emissive:0x8c6b28
+  emissive:0xffa52b,
+  emissiveIntensity:2
  })
 );
 
 bulb.position.set(x,7,z);
-
 scene.add(bulb);
+
+const light=new THREE.PointLight(
+ 0xffc36b,3.5,30
+);
+
+light.position.set(x,7,z);
+scene.add(light);
 }
 
 for(let i=-450;i<=450;i+=45){
@@ -619,15 +537,13 @@ function createCar(x,z,color){
 
 const g=new THREE.Group();
 
-const paint=
-new THREE.MeshStandardMaterial({
+const paint=new THREE.MeshStandardMaterial({
  color,
  metalness:.65,
  roughness:.25
 });
 
-const dark=
-new THREE.MeshStandardMaterial({
+const dark=new THREE.MeshStandardMaterial({
  color:0x111315,
  roughness:.3
 });
@@ -639,8 +555,15 @@ const body=new THREE.Mesh(
 
 body.position.y=1.15;
 body.castShadow=true;
-
 g.add(body);
+
+const hood=new THREE.Mesh(
+ new THREE.BoxGeometry(5.15,.35,2),
+ paint
+);
+
+hood.position.set(0,1.75,-2.7);
+g.add(hood);
 
 const cabin=new THREE.Mesh(
  new THREE.BoxGeometry(4.1,1.3,4),
@@ -648,53 +571,41 @@ const cabin=new THREE.Mesh(
 );
 
 cabin.position.y=2.1;
-
 g.add(cabin);
 
-const glass=
-new THREE.MeshStandardMaterial({
- color:0x72b6d5,
+const glass=new THREE.MeshStandardMaterial({
+ color:0x477c91,
  roughness:.1,
  metalness:.2
 });
 
 const windshield=new THREE.Mesh(
- new THREE.BoxGeometry(
-  3.5,.85,.08
- ),
+ new THREE.BoxGeometry(3.5,.85,.08),
  glass
 );
 
-windshield.position.set(
- 0,2.2,-2.03
-);
-
+windshield.position.set(0,2.2,-2.03);
 g.add(windshield);
-
-/* rodas */
 
 for(const p of [
  [-2.55,.75,-2.5],
- [ 2.55,.75,-2.5],
- [-2.55,.75, 2.5],
- [ 2.55,.75, 2.5]
+ [2.55,.75,-2.5],
+ [-2.55,.75,2.5],
+ [2.55,.75,2.5]
 ]){
 
 const wheel=new THREE.Mesh(
- new THREE.CylinderGeometry(
-  .8,.8,.55,20
- ),
+ new THREE.CylinderGeometry(.8,.8,.55,20),
  dark
 );
 
 wheel.rotation.z=Math.PI/2;
 wheel.position.set(...p);
-
+wheel.castShadow=true;
 g.add(wheel);
 }
 
 g.position.set(x,0,z);
-
 scene.add(g);
 }
 
@@ -709,71 +620,64 @@ createCar(18,58,0xc28c2f);
 
 const zombies=[];
 
+const zombieClothes=[
+ 0x263b2b,
+ 0x45332b,
+ 0x303b4a,
+ 0x4b2630,
+ 0x424242
+];
+
 function createZombie(x,z){
 
 const g=new THREE.Group();
 
-const skin=
-new THREE.MeshStandardMaterial({
- color:0x849477,
+const skin=new THREE.MeshStandardMaterial({
+ color:0x788b69,
  roughness:1
 });
 
-const shirt=
-new THREE.MeshStandardMaterial({
- color:0x465848,
+const shirt=new THREE.MeshStandardMaterial({
+ color:zombieClothes[
+  Math.floor(Math.random()*zombieClothes.length)
+ ],
  roughness:.95
 });
 
-const pants=
-new THREE.MeshStandardMaterial({
- color:0x292f34,
+const pants=new THREE.MeshStandardMaterial({
+ color:0x20252a,
  roughness:.9
 });
 
-const shoe=
-new THREE.MeshStandardMaterial({
- color:0x111315,
- roughness:.8
+const shoe=new THREE.MeshStandardMaterial({
+ color:0x090a0b
 });
 
 /* pernas */
 
-const leftLeg=new THREE.Group();
-const rightLeg=new THREE.Group();
-
-const legGeo=
-new THREE.CapsuleGeometry(
+const legGeo=new THREE.CapsuleGeometry(
  .14,.85,5,10
 );
 
-const lLeg=new THREE.Mesh(
- legGeo,pants
-);
+const leftLeg=new THREE.Group();
+const rightLeg=new THREE.Group();
 
+const lLeg=new THREE.Mesh(legGeo,pants);
 lLeg.position.y=-.8;
-
 leftLeg.add(lLeg);
 
-const rLeg=new THREE.Mesh(
- legGeo,pants
-);
-
+const rLeg=new THREE.Mesh(legGeo,pants);
 rLeg.position.y=-.8;
-
 rightLeg.add(rLeg);
 
-/* pés */
+const footGeo=new THREE.BoxGeometry(.42,.2,.72);
 
-const lFoot=new THREE.Mesh(
- new THREE.BoxGeometry(.42,.2,.72),
- shoe
-);
-
+const lFoot=new THREE.Mesh(footGeo,shoe);
 lFoot.position.set(0,-1.7,-.2);
 leftLeg.add(lFoot);
 
-const rFoot=lFoot.clone();
+const rFoot=new THREE.Mesh(footGeo,shoe);
+rFoot.position.set(0,-1.7,-.2);
 rightLeg.add(rFoot);
 
 leftLeg.position.set(-.25,1.8,0);
@@ -784,135 +688,107 @@ g.add(leftLeg,rightLeg);
 /* corpo */
 
 const torso=new THREE.Mesh(
- new THREE.CapsuleGeometry(
-  .36,1,6,14
- ),
+ new THREE.CapsuleGeometry(.36,1,6,14),
  shirt
 );
 
 torso.position.y=2.35;
 torso.scale.y=1.25;
-
 g.add(torso);
 
 /* pescoço */
 
 const neck=new THREE.Mesh(
- new THREE.CylinderGeometry(
-  .16,.18,.3,12
- ),
+ new THREE.CylinderGeometry(.16,.18,.3,12),
  skin
 );
 
 neck.position.y=3.5;
-
 g.add(neck);
 
-/* cabeça */
+/* CABEÇA */
 
 const head=new THREE.Mesh(
- new THREE.SphereGeometry(
-  .58,24,20
- ),
+ new THREE.SphereGeometry(.58,24,20),
  skin
 );
 
-head.position.y=4.05;
-
+head.position.set(0,4.05,0);
 g.add(head);
+
+/* cabelo */
+
+const hair=new THREE.Mesh(
+ new THREE.SphereGeometry(.59,20,16,0,Math.PI*2,0,Math.PI*.45),
+ new THREE.MeshStandardMaterial({
+  color:0x171512
+ })
+);
+
+hair.position.set(0,4.2,0);
+g.add(hair);
 
 /* olhos */
 
-const redEye=
-new THREE.MeshStandardMaterial({
+const redEye=new THREE.MeshStandardMaterial({
  color:0xff0000,
- emissive:0xaa0000
+ emissive:0xaa0000,
+ emissiveIntensity:2
 });
 
 for(const side of [-1,1]){
 
 const eye=new THREE.Mesh(
- new THREE.SphereGeometry(
-  .09,12,12
- ),
+ new THREE.SphereGeometry(.09,12,12),
  redEye
 );
 
-eye.position.set(
- side*.21,
- 4.12,
- -.55
-);
-
+eye.position.set(side*.21,4.12,-.55);
 g.add(eye);
 
 /* sobrancelha */
 
 const brow=new THREE.Mesh(
- new THREE.BoxGeometry(
-  .27,.07,.07
- ),
+ new THREE.BoxGeometry(.27,.07,.07),
  new THREE.MeshStandardMaterial({
-  color:0x33362f
+  color:0x202019
  })
 );
 
-brow.position.set(
- side*.21,
- 4.28,
- -.54
-);
-
+brow.position.set(side*.21,4.28,-.54);
 g.add(brow);
 
 /* orelha */
 
 const ear=new THREE.Mesh(
- new THREE.SphereGeometry(
-  .14,10,10
- ),
+ new THREE.SphereGeometry(.14,10,10),
  skin
 );
 
-ear.position.set(
- side*.57,
- 4.03,
- 0
-);
-
+ear.position.set(side*.57,4.03,0);
 g.add(ear);
 }
 
 /* nariz */
 
 const nose=new THREE.Mesh(
- new THREE.SphereGeometry(
-  .12,12,10
- ),
+ new THREE.SphereGeometry(.12,12,10),
  skin
 );
 
-nose.position.set(
- 0,3.94,-.6
-);
-
+nose.position.set(0,3.94,-.6);
 g.add(nose);
 
 /* boca */
 
 const mouth=new THREE.Mesh(
- new THREE.BoxGeometry(
-  .48,.16,.08
- ),
+ new THREE.BoxGeometry(.48,.16,.08),
  new THREE.MeshStandardMaterial({
   color:0x160404
  })
 );
 
-mouth.position.set(
- 0,3.78,-.58
-);
-
+mouth.position.set(0,3.78,-.58);
 g.add(mouth);
 
 /* dentes */
@@ -920,20 +796,13 @@ g.add(mouth);
 for(let i=-1;i<=1;i++){
 
 const tooth=new THREE.Mesh(
- new THREE.BoxGeometry(
-  .08,.1,.05
- ),
+ new THREE.BoxGeometry(.08,.1,.05),
  new THREE.MeshBasicMaterial({
   color:0xe1d4ad
  })
 );
 
-tooth.position.set(
- i*.11,
- 3.82,
- -.62
-);
-
+tooth.position.set(i*.11,3.82,-.62);
 g.add(tooth);
 }
 
@@ -942,51 +811,33 @@ g.add(tooth);
 const leftArm=new THREE.Group();
 const rightArm=new THREE.Group();
 
-const armGeo=
-new THREE.CapsuleGeometry(
+const armGeo=new THREE.CapsuleGeometry(
  .13,.78,5,10
 );
 
-const la=new THREE.Mesh(
- armGeo,skin
-);
-
+const la=new THREE.Mesh(armGeo,skin);
 la.position.y=-.72;
 leftArm.add(la);
 
-const ra=new THREE.Mesh(
- armGeo,skin
-);
-
+const ra=new THREE.Mesh(armGeo,skin);
 ra.position.y=-.72;
 rightArm.add(ra);
 
-leftArm.position.set(
- -.7,2.75,0
-);
-
-rightArm.position.set(
- .7,2.75,0
-);
+leftArm.position.set(-.7,2.75,0);
+rightArm.position.set(.7,2.75,0);
 
 g.add(leftArm,rightArm);
 
 /* mãos */
 
-const handGeo=
-new THREE.SphereGeometry(
- .19,14,12
-);
+const handGeo=new THREE.SphereGeometry(.19,14,12);
 
-const lh=new THREE.Mesh(
- handGeo,skin
-);
-
+const lh=new THREE.Mesh(handGeo,skin);
 lh.position.y=-1.48;
-
 leftArm.add(lh);
 
-const rh=lh.clone();
+const rh=new THREE.Mesh(handGeo,skin);
+rh.position.y=-1.48;
 rightArm.add(rh);
 
 g.position.set(x,0,z);
@@ -1002,11 +853,11 @@ zombies.push({
  hp:3,
  phase:Math.random()*10,
  speed:.018+Math.random()*.012,
- attackTimer:0
+ attackTimer:Math.random()*60
  });
 }
 
-/* cria zumbis */
+/* criar zumbis */
 
 for(let i=0;i<35;i++){
 
@@ -1016,7 +867,7 @@ const d=150+Math.random()*420;
 createZombie(
  Math.sin(a)*d,
  Math.cos(a)*d
- );
+);
 }
 
 /* =========================================================
@@ -1043,41 +894,11 @@ camera.position.set(
 ========================================================= */
 
 const weapons=[
- {
-  name:"PISTOLA",
-  damage:2,
-  delay:250,
-  color:0x777777,
-  sound:520
- },
- {
-  name:"AK-47",
-  damage:2,
-  delay:140,
-  color:0x65462c,
-  sound:330
- },
- {
-  name:"UMP",
-  damage:2,
-  delay:120,
-  color:0x333a40,
-  sound:420
- },
- {
-  name:"SCAR",
-  damage:3,
-  delay:170,
-  color:0x1d2529,
-  sound:370
- },
- {
-  name:"SNIPER",
-  damage:6,
-  delay:550,
-  color:0x566066,
-  sound:250
- }
+ {name:"PISTOLA",damage:2,delay:250,color:0x777777,sound:520},
+ {name:"AK-47",damage:2,delay:140,color:0x65462c,sound:330},
+ {name:"UMP",damage:2,delay:120,color:0x333a40,sound:420},
+ {name:"SCAR",damage:3,delay:170,color:0x1d2529,sound:370},
+ {name:"SNIPER",damage:6,delay:550,color:0x566066,sound:250}
 ];
 
 let weaponIndex=0;
@@ -1088,10 +909,6 @@ const weaponGroup=new THREE.Group();
 
 camera.add(weaponGroup);
 scene.add(camera);
-
-/* =========================================================
-   MODELO DAS ARMAS
-========================================================= */
 
 function box(w,h,d,color){
 
@@ -1108,9 +925,7 @@ return new THREE.Mesh(
 function cylinder(r,l,color){
 
 return new THREE.Mesh(
- new THREE.CylinderGeometry(
-  r,r,l,20
- ),
+ new THREE.CylinderGeometry(r,r,l,20),
  new THREE.MeshStandardMaterial({
   color,
   metalness:.85,
@@ -1122,9 +937,7 @@ return new THREE.Mesh(
 function createGun(){
 
 while(weaponGroup.children.length)
- weaponGroup.remove(
-  weaponGroup.children[0]
- );
+ weaponGroup.remove(weaponGroup.children[0]);
 
 const W=weapons[weaponIndex];
 const dark=0x101315;
@@ -1133,37 +946,18 @@ const dark=0x101315;
 
 if(weaponIndex===0){
 
-const body=box(
- .45,.25,1.25,W.color
-);
-
-body.position.set(
- .43,-.36,-1
-);
-
+const body=box(.45,.25,1.25,W.color);
+body.position.set(.43,-.36,-1);
 weaponGroup.add(body);
 
-const barrel=cylinder(
- .06,1.1,dark
-);
-
+const barrel=cylinder(.06,1.1,dark);
 barrel.rotation.x=Math.PI/2;
-barrel.position.set(
- .43,-.36,-1.85
-);
-
+barrel.position.set(.43,-.36,-1.85);
 weaponGroup.add(barrel);
 
-const grip=box(
- .28,.7,.42,dark
-);
-
-grip.position.set(
- .43,-.75,-.6
-);
-
+const grip=box(.28,.7,.42,dark);
+grip.position.set(.43,-.75,-.6);
 grip.rotation.x=.2;
-
 weaponGroup.add(grip);
 }
 
@@ -1171,47 +965,22 @@ weaponGroup.add(grip);
 
 if(weaponIndex===1){
 
-const body=box(
- .45,.42,1.4,W.color
-);
-
-body.position.set(
- .43,-.36,-1
-);
-
+const body=box(.45,.42,1.4,W.color);
+body.position.set(.43,-.36,-1);
 weaponGroup.add(body);
 
-const barrel=cylinder(
- .07,2.5,dark
-);
-
+const barrel=cylinder(.07,2.5,dark);
 barrel.rotation.x=Math.PI/2;
-barrel.position.set(
- .43,-.36,-2.65
-);
-
+barrel.position.set(.43,-.36,-2.65);
 weaponGroup.add(barrel);
 
-const stock=box(
- .35,.35,.9,0x54351f
-);
-
-stock.position.set(
- .43,-.4,.05
-);
-
+const stock=box(.35,.35,.9,0x54351f);
+stock.position.set(.43,-.4,.05);
 weaponGroup.add(stock);
 
-const mag=box(
- .25,.7,.35,dark
-);
-
-mag.position.set(
- .43,-.8,-1
-);
-
+const mag=box(.25,.7,.35,dark);
+mag.position.set(.43,-.8,-1);
 mag.rotation.x=-.2;
-
 weaponGroup.add(mag);
 }
 
@@ -1219,35 +988,17 @@ weaponGroup.add(mag);
 
 if(weaponIndex===2){
 
-const body=box(
- .5,.45,1.3,W.color
-);
-
-body.position.set(
- .43,-.36,-1
-);
-
+const body=box(.5,.45,1.3,W.color);
+body.position.set(.43,-.36,-1);
 weaponGroup.add(body);
 
-const barrel=cylinder(
- .075,2,dark
-);
-
+const barrel=cylinder(.075,2,dark);
 barrel.rotation.x=Math.PI/2;
-barrel.position.set(
- .43,-.36,-2.35
-);
-
+barrel.position.set(.43,-.36,-2.35);
 weaponGroup.add(barrel);
 
-const mag=box(
- .24,.75,.35,dark
-);
-
-mag.position.set(
- .43,-.8,-1
-);
-
+const mag=box(.24,.75,.35,dark);
+mag.position.set(.43,-.8,-1);
 weaponGroup.add(mag);
 }
 
@@ -1255,45 +1006,21 @@ weaponGroup.add(mag);
 
 if(weaponIndex===3){
 
-const body=box(
- .48,.42,1.5,W.color
-);
-
-body.position.set(
- .43,-.36,-1
-);
-
+const body=box(.48,.42,1.5,W.color);
+body.position.set(.43,-.36,-1);
 weaponGroup.add(body);
 
-const barrel=cylinder(
- .075,2.8,dark
-);
-
+const barrel=cylinder(.075,2.8,dark);
 barrel.rotation.x=Math.PI/2;
-barrel.position.set(
- .43,-.36,-2.85
-);
-
+barrel.position.set(.43,-.36,-2.85);
 weaponGroup.add(barrel);
 
-const mag=box(
- .25,.8,.35,dark
-);
-
-mag.position.set(
- .43,-.8,-1
-);
-
+const mag=box(.25,.8,.35,dark);
+mag.position.set(.43,-.8,-1);
 weaponGroup.add(mag);
 
-const stock=box(
- .35,.4,.85,dark
-);
-
-stock.position.set(
- .43,-.4,.05
-);
-
+const stock=box(.35,.4,.85,dark);
+stock.position.set(.43,-.4,.05);
 weaponGroup.add(stock);
 }
 
@@ -1301,64 +1028,33 @@ weaponGroup.add(stock);
 
 if(weaponIndex===4){
 
-const body=box(
- .5,.42,1.55,W.color
-);
-
-body.position.set(
- .43,-.36,-1
-);
-
+const body=box(.5,.42,1.55,W.color);
+body.position.set(.43,-.36,-1);
 weaponGroup.add(body);
 
-const barrel=cylinder(
- .065,3.8,dark
-);
-
+const barrel=cylinder(.065,3.8,dark);
 barrel.rotation.x=Math.PI/2;
-barrel.position.set(
- .43,-.36,-3
-);
-
+barrel.position.set(.43,-.36,-3);
 weaponGroup.add(barrel);
 
-/* luneta */
-
-const scope=cylinder(
- .13,1,dark
-);
-
+const scope=cylinder(.13,1,dark);
 scope.rotation.x=Math.PI/2;
-scope.position.set(
- .43,-.02,-1.45
-);
-
+scope.position.set(.43,-.02,-1.45);
 weaponGroup.add(scope);
 
 const lens=new THREE.Mesh(
- new THREE.CylinderGeometry(
-  .14,.14,.05,20
- ),
+ new THREE.CylinderGeometry(.14,.14,.05,20),
  new THREE.MeshBasicMaterial({
   color:0x315f80
  })
 );
 
 lens.rotation.x=Math.PI/2;
-lens.position.set(
- .43,-.02,-1.96
-);
-
+lens.position.set(.43,-.02,-1.96);
 weaponGroup.add(lens);
 
-const stock=box(
- .35,.4,1,dark
-);
-
-stock.position.set(
- .43,-.4,.05
-);
-
+const stock=box(.35,.4,1,dark);
+stock.position.set(.43,-.4,.05);
 weaponGroup.add(stock);
 }
 }
@@ -1366,31 +1062,37 @@ weaponGroup.add(stock);
 createGun();
 
 /* =========================================================
-   SOM
+   ÁUDIO
 ========================================================= */
 
 let audioCtx=null;
 
-function sound(freq,duration,type="square"){
+function initAudio(){
 
-if(!audioCtx)
- audioCtx=
-  new (
-   window.AudioContext||
-   window.webkitAudioContext
-  )();
+if(!audioCtx){
 
-const osc=
- audioCtx.createOscillator();
+audioCtx=new(
+ window.AudioContext||
+ window.webkitAudioContext
+)();
+}
 
-const gain=
- audioCtx.createGain();
+if(audioCtx.state==="suspended")
+ audioCtx.resume();
+}
+
+function sound(freq,duration,type="square",volume=.12){
+
+initAudio();
+
+const osc=audioCtx.createOscillator();
+const gain=audioCtx.createGain();
 
 osc.type=type;
 osc.frequency.value=freq;
 
 gain.gain.setValueAtTime(
- .12,
+ volume,
  audioCtx.currentTime
 );
 
@@ -1403,37 +1105,28 @@ osc.connect(gain);
 gain.connect(audioCtx.destination);
 
 osc.start();
-osc.stop(
- audioCtx.currentTime+duration
- );
+osc.stop(audioCtx.currentTime+duration);
 }
 
 function weaponSound(){
 
 const w=weapons[weaponIndex];
 
-sound(
- w.sound,
- .08,
- "sawtooth"
-);
+sound(w.sound,.08,"sawtooth",.22);
 
 setTimeout(()=>{
- sound(
-  w.sound/2,
-  .06,
-  "square"
- );
-},20);
+ sound(w.sound/2,.06,"square",.14);
+},25);
 }
 
 function zombieSound(){
 
 sound(
- 90+Math.random()*35,
- .35,
- "sawtooth"
- );
+ 75+Math.random()*45,
+ .4,
+ "sawtooth",
+ .16
+);
 }
 
 /* =========================================================
@@ -1451,31 +1144,22 @@ function moveJoy(e){
 
 const r=joy.getBoundingClientRect();
 
-let dx=
- e.clientX-
- (r.left+r.width/2);
-
-let dy=
- e.clientY-
- (r.top+r.height/2);
+let dx=e.clientX-(r.left+r.width/2);
+let dy=e.clientY-(r.top+r.height/2);
 
 const max=42;
 const dist=Math.hypot(dx,dy);
 
 if(dist>max){
-
-dx=dx/dist*max;
-dy=dy/dist*max;
+ dx=dx/dist*max;
+ dy=dy/dist*max;
 }
 
 joyX=dx/max;
 joyY=dy/max;
 
-knob.style.left=
- 37+dx+"px";
-
-knob.style.top=
- 37+dy+"px";
+knob.style.left=37+dx+"px";
+knob.style.top=37+dy+"px";
 }
 
 joy.onpointerdown=e=>{
@@ -1485,18 +1169,23 @@ joy.onpointerdown=e=>{
 };
 
 joy.onpointermove=e=>{
- if(joyActive)
-  moveJoy(e);
+ if(joyActive)moveJoy(e);
 };
 
 joy.onpointerup=()=>{
+ joyActive=false;
+ joyX=0;
+ joyY=0;
+ knob.style.left="37px";
+ knob.style.top="37px";
+};
 
-joyActive=false;
-joyX=0;
-joyY=0;
-
-knob.style.left="37px";
-knob.style.top="37px";
+joy.onpointercancel=()=>{
+ joyActive=false;
+ joyX=0;
+ joyY=0;
+ knob.style.left="37px";
+ knob.style.top="37px";
 };
 
 /* =========================================================
@@ -1508,6 +1197,10 @@ let lx=0;
 let ly=0;
 
 renderer.domElement.onpointerdown=e=>{
+
+/* não captura toque do joystick */
+
+if(e.clientX<170 && e.clientY>innerHeight-170)return;
 
 look=true;
 lx=e.clientX;
@@ -1527,14 +1220,17 @@ ly=e.clientY;
 player.angle-=dx*.004;
 player.pitch-=dy*.003;
 
-player.pitch=
- Math.max(
-  -1.1,
-  Math.min(1.1,player.pitch)
- );
+player.pitch=Math.max(
+ -1.05,
+ Math.min(1.05,player.pitch)
+);
 };
 
 renderer.domElement.onpointerup=()=>{
+ look=false;
+};
+
+renderer.domElement.onpointercancel=()=>{
  look=false;
 };
 
@@ -1577,11 +1273,8 @@ camera.position.set(
 
 camera.rotation.order="YXZ";
 
-camera.rotation.y=
- player.angle;
-
-camera.rotation.x=
- player.pitch;
+camera.rotation.y=player.angle;
+camera.rotation.x=player.pitch;
 }
 
 /* =========================================================
@@ -1597,15 +1290,10 @@ const dist=Math.hypot(
  player.z-d.z
 );
 
-if(dist<4){
+if(dist<4&&!d.open){
 
-if(!d.open){
-
-d.mesh.rotation.y=
- -Math.PI/2;
-
+d.mesh.rotation.y=-Math.PI/2;
 d.open=true;
-}
 }
 }
 }
@@ -1614,8 +1302,9 @@ d.open=true;
    TROCAR ARMA
 ========================================================= */
 
-document.getElementById("switch")
-.onclick=()=>{
+document.getElementById("switch").onclick=()=>{
+
+initAudio();
 
 weaponIndex++;
 
@@ -1624,30 +1313,23 @@ if(weaponIndex>=weapons.length)
 
 createGun();
 
-document.getElementById("weapon")
-.textContent=
+document.getElementById("weapon").textContent=
  weapons[weaponIndex].name;
 
-const sniper=
- weaponIndex===4;
+const sniper=weaponIndex===4;
 
-document.getElementById("aim")
-.style.display=
+document.getElementById("aim").style.display=
  sniper?"block":"none";
 
-document.getElementById("zoomBtn")
-.style.display=
+document.getElementById("zoomBtn").style.display=
  sniper?"block":"none";
 
 if(!sniper){
 
 aiming=false;
 
-document.getElementById("scope")
-.style.display="none";
-
-document.getElementById("cross")
-.style.display="block";
+document.getElementById("scope").style.display="none";
+document.getElementById("cross").style.display="block";
 }
 
 camera.fov=72;
@@ -1658,24 +1340,19 @@ camera.updateProjectionMatrix();
    MIRA
 ========================================================= */
 
-document.getElementById("aim")
-.onclick=()=>{
+document.getElementById("aim").onclick=()=>{
 
 if(weaponIndex!==4)return;
 
 aiming=!aiming;
 
-document.getElementById("scope")
-.style.display=
+document.getElementById("scope").style.display=
  aiming?"block":"none";
 
-document.getElementById("cross")
-.style.display=
+document.getElementById("cross").style.display=
  aiming?"none":"block";
 
-camera.fov=
- aiming?45:72;
-
+camera.fov=aiming?45:72;
 camera.updateProjectionMatrix();
 };
 
@@ -1683,18 +1360,15 @@ camera.updateProjectionMatrix();
    ZOOM
 ========================================================= */
 
-document.getElementById("zoomBtn")
-.onclick=()=>{
+document.getElementById("zoomBtn").onclick=()=>{
 
 if(!aiming)return;
 
 zoomLevel++;
 
-if(zoomLevel>3)
- zoomLevel=1;
+if(zoomLevel>3)zoomLevel=1;
 
-document.getElementById("zoom")
-.textContent=
+document.getElementById("zoom").textContent=
  "ZOOM "+zoomLevel+"X";
 
 camera.fov=
@@ -1711,13 +1385,19 @@ camera.updateProjectionMatrix();
 let firing=false;
 let lastShot=0;
 
-document.getElementById("fire")
-.onpointerdown=()=>{
+document.getElementById("fire").onpointerdown=e=>{
+ e.preventDefault();
+ initAudio();
  firing=true;
+ shoot();
 };
 
-document.getElementById("fire")
-.onpointerup=()=>{
+document.getElementById("fire").onpointerup=e=>{
+ e.preventDefault();
+ firing=false;
+};
+
+document.getElementById("fire").onpointercancel=()=>{
  firing=false;
 };
 
@@ -1726,8 +1406,7 @@ function shoot(){
 const now=performance.now();
 const w=weapons[weaponIndex];
 
-if(now-lastShot<w.delay)
- return;
+if(now-lastShot<w.delay)return;
 
 lastShot=now;
 
@@ -1743,93 +1422,71 @@ setTimeout(()=>{
 
 /* flash */
 
-const flash=
-new THREE.PointLight(
- 0xff9d30,
- 14,
- 10
+const flash=new THREE.PointLight(
+ 0xff9d30,18,10
 );
 
-flash.position.set(
- .43,-.35,-2
-);
-
+flash.position.set(.43,-.35,-2);
 weaponGroup.add(flash);
 
 setTimeout(()=>{
  weaponGroup.remove(flash);
 },45);
 
-/* raio */
+/* tiro */
 
-const direction=
-new THREE.Vector3();
+const direction=new THREE.Vector3();
 
-camera.getWorldDirection(
- direction
-);
+camera.getWorldDirection(direction);
 
-const ray=
-new THREE.Raycaster(
+const ray=new THREE.Raycaster(
  camera.position.clone(),
  direction,
  0,
  250
 );
 
-const targets=
-zombies.map(z=>z.mesh);
+const targets=[];
 
-const hits=
-ray.intersectObjects(
- targets,
- true
-);
+zombies.forEach(z=>{
+ z.mesh.traverse(obj=>{
+  if(obj.isMesh)targets.push(obj);
+ });
+});
+
+const hits=ray.intersectObjects(targets,true);
 
 if(hits.length){
 
-let hitObj=
- hits[0].object;
+const hitObj=hits[0].object;
 
-let z=
- zombies.find(
-  z=>z.mesh.getObjectById(
-   hitObj.id
-  )
- );
+const z=zombies.find(z=>{
+ let found=false;
 
-if(!z){
+ z.mesh.traverse(obj=>{
+  if(obj===hitObj)found=true;
+ });
 
-z=zombies.find(z=>
- z.mesh.children.some(
-  c=>c.id===hitObj.id
- )
- );
-}
+ return found;
+});
 
 if(z){
 
 z.hp-=w.damage;
 
-blood(
- hits[0].point
- );
+blood(hits[0].point);
 
 if(z.hp<=0){
 
 scene.remove(z.mesh);
 
-const index=
- zombies.indexOf(z);
+const index=zombies.indexOf(z);
 
-if(index>=0)
- zombies.splice(index,1);
+if(index>=0)zombies.splice(index,1);
 
 kills++;
 
-document.getElementById(
- "kills"
-).textContent=kills;
+document.getElementById("kills").textContent=kills;
 }
 }
 }
@@ -1845,8 +1502,7 @@ for(let i=0;i<7;i++){
 
 const p=new THREE.Mesh(
  new THREE.SphereGeometry(
-  .035+Math.random()*.04,
-  6,6
+  .035+Math.random()*.04,6,6
  ),
  new THREE.MeshBasicMaterial({
   color:0xb00000
@@ -1854,14 +1510,13 @@ const p=new THREE.Mesh(
 );
 
 p.position.copy(pos);
-
 scene.add(p);
 
 const v=new THREE.Vector3(
  (Math.random()-.5)*.1,
  Math.random()*.1,
  (Math.random()-.5)*.1
- );
+);
 
 let life=0;
 
@@ -1872,9 +1527,8 @@ v.y-=.006;
 life++;
 
 if(life>20){
-
-scene.remove(p);
-return;
+ scene.remove(p);
+ return;
 }
 
 requestAnimationFrame(drop);
@@ -1885,97 +1539,69 @@ drop();
 }
 
 /* =========================================================
-   ZUMBIS
+   ZUMBIS - SEM DEITAR
 ========================================================= */
 
 function updateZombies(){
 
 for(const z of zombies){
 
-const dx=
- player.x-z.mesh.position.x;
+const dx=player.x-z.mesh.position.x;
+const dz=player.z-z.mesh.position.z;
 
-const dz=
- player.z-z.mesh.position.z;
+const dist=Math.hypot(dx,dz);
 
-const dist=
- Math.hypot(dx,dz);
-
-if(dist>2.7){
-
-/* sempre em pé */
+/* NUNCA DEITA */
 
 z.mesh.position.y=0;
 
-/* aproximação */
+if(dist>2.8){
 
-z.mesh.position.x+=
- dx/dist*z.speed;
+z.mesh.position.x+=dx/dist*z.speed;
+z.mesh.position.z+=dz/dist*z.speed;
 
-z.mesh.position.z+=
- dz/dist*z.speed;
+/* só gira no eixo Y */
 
-/* olha para o jogador */
-
-z.mesh.lookAt(
- player.x,
- 2,
- player.z
- );
-
-/* animação de caminhada */
+z.mesh.rotation.y=Math.atan2(dx,dz);
+z.mesh.rotation.x=0;
+z.mesh.rotation.z=0;
 
 z.phase+=.16;
 
-const walk=
- Math.sin(z.phase)*.7;
+const walk=Math.sin(z.phase)*.7;
 
-z.leftLeg.rotation.x=
- walk;
+z.leftLeg.rotation.x=walk;
+z.rightLeg.rotation.x=-walk;
 
-z.rightLeg.rotation.x=
- -walk;
-
-z.leftArm.rotation.x=
- -walk*.55;
-
-z.rightArm.rotation.x=
- walk*.55;
-
-/* movimento do corpo */
-
-z.mesh.rotation.z=
- Math.sin(z.phase*2)*.025;
+z.leftArm.rotation.x=-walk*.55;
+z.rightArm.rotation.x=walk*.55;
 
 }else{
 
-/* ataque SEM DEITAR */
-
-z.mesh.position.y=0;
+/* ataque em pé */
 
 z.attackTimer++;
 
+z.mesh.position.y=0;
+z.mesh.rotation.x=0;
+z.mesh.rotation.z=0;
+
+z.mesh.rotation.y=Math.atan2(dx,dz);
+
+/* braços levantados */
+
 const attackMove=
- Math.sin(
-  z.attackTimer*.35
- )*.18;
+ Math.sin(z.attackTimer*.35)*.18;
 
-z.leftArm.rotation.x=
- -1.0+attackMove;
+z.leftArm.rotation.x=-1+attackMove;
+z.rightArm.rotation.x=-1-attackMove;
 
-z.rightArm.rotation.x=
- -1.0-attackMove;
+z.leftLeg.rotation.x=0;
+z.rightLeg.rotation.x=0;
 
-/* balança o corpo */
+/* dano */
 
-z.mesh.rotation.z=
- Math.sin(
-  z.attackTimer*.3
- )*.04;
-
-if(
- z.attackTimer%70===0
- ){
+if(z.attackTimer%70===0){
 
 zombieSound();
 
@@ -1996,8 +1622,7 @@ if(player.health<=0)
 
 function damageEffect(){
 
-const d=
-document.getElementById("damage");
+const d=document.getElementById("damage");
 
 d.style.opacity=.6;
 
@@ -2005,25 +1630,16 @@ setTimeout(()=>{
  d.style.opacity=0;
 },150);
 
-document.getElementById("hp")
-.style.width=
- Math.max(
- 0,
- player.health
- )+"%";
+document.getElementById("hp").style.width=
+ Math.max(0,player.health)+"%";
 }
 
 /* =========================================================
    MINIMAPA
 ========================================================= */
 
-const mini=
-document.getElementById(
- "miniCanvas"
-);
-
-const ctx=
-mini.getContext("2d");
+const mini=document.getElementById("miniCanvas");
+const ctx=mini.getContext("2d");
 
 mini.width=210;
 mini.height=210;
@@ -2032,14 +1648,12 @@ function minimap(){
 
 ctx.clearRect(0,0,210,210);
 
-ctx.fillStyle="#507649";
+ctx.fillStyle="#263d28";
 ctx.fillRect(0,0,210,210);
-
-const scale=.18;
 
 /* ruas */
 
-ctx.strokeStyle="#555";
+ctx.strokeStyle="#454545";
 ctx.lineWidth=9;
 
 ctx.beginPath();
@@ -2052,31 +1666,23 @@ ctx.moveTo(0,105);
 ctx.lineTo(210,105);
 ctx.stroke();
 
-/* prédios/casas */
+/* construções */
 
 ctx.fillStyle="#777";
 
 for(const c of walls){
 
-const x=
- 105+
- (c.x-player.x)*scale;
+const x=105+(c.x-player.x)*.18;
+const y=105+(c.z-player.z)*.18;
 
-const y=
- 105+
- (c.z-player.z)*scale;
-
-if(
- x>-20&&x<230&&
- y>-20&&y<230
- ){
+if(x>-20&&x<230&&y>-20&&y<230){
 
 ctx.fillRect(
- x-c.w*scale/2,
- y-c.d*scale/2,
- c.w*scale,
- c.d*scale
- );
+ x-c.w*.18/2,
+ y-c.d*.18/2,
+ c.w*.18,
+ c.d*.18
+);
 }
 }
 
@@ -2086,25 +1692,13 @@ ctx.fillStyle="#f11";
 
 for(const z of zombies){
 
-const x=
- 105+
- (z.mesh.position.x-player.x)*scale;
+const x=105+(z.mesh.position.x-player.x)*.18;
+const y=105+(z.mesh.position.z-player.z)*.18;
 
-const y=
- 105+
- (z.mesh.position.z-player.z)*scale;
-
-if(
- x>=0&&x<=210&&
- y>=0&&y<=210
- ){
+if(x>=0&&x<=210&&y>=0&&y<=210){
 
 ctx.beginPath();
-
-ctx.arc(
- x,y,3,0,Math.PI*2
- );
-
+ctx.arc(x,y,3,0,Math.PI*2);
 ctx.fill();
 }
 }
@@ -2119,12 +1713,10 @@ ctx.rotate(player.angle);
 ctx.fillStyle="#20ff55";
 
 ctx.beginPath();
-
 ctx.moveTo(0,-10);
 ctx.lineTo(6,7);
 ctx.lineTo(-6,7);
 ctx.closePath();
-
 ctx.fill();
 
 ctx.restore();
@@ -2143,32 +1735,19 @@ if(dead)return;
 
 dead=true;
 
-document.getElementById(
- "finalKills"
-).textContent=kills;
-
-document.getElementById(
- "gameover"
-).style.display="flex";
+document.getElementById("finalKills").textContent=kills;
+document.getElementById("gameover").style.display="flex";
 }
 
 /* =========================================================
    START
 ========================================================= */
 
-document.getElementById("start")
-.onclick=()=>{
+document.getElementById("start").onclick=()=>{
 
-document.getElementById("menu")
-.style.display="none";
+document.getElementById("menu").style.display="none";
 
-if(!audioCtx){
- audioCtx=
- new (
-  window.AudioContext||
-  window.webkitAudioContext
- )();
-}
+initAudio();
 };
 
 /* =========================================================
@@ -2186,13 +1765,9 @@ updateDoors();
 updateZombies();
 minimap();
 
-if(firing)
- shoot();
+if(firing)shoot();
 
-renderer.render(
- scene,
- camera
-);
+renderer.render(scene,camera);
 }
 
 animate();
@@ -2201,19 +1776,15 @@ animate();
    RESIZE
 ========================================================= */
 
-window.addEventListener(
- "resize",
- ()=>{
+window.addEventListener("resize",()=>{
 
-camera.aspect=
- innerWidth/innerHeight;
-
+camera.aspect=innerWidth/innerHeight;
 camera.updateProjectionMatrix();
 
 renderer.setSize(
  innerWidth,
  innerHeight
- );
+);
 });
 
 </script>
